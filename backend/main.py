@@ -30,9 +30,7 @@ app.add_middleware(
 class ReportRequest(BaseModel):
     edmValue: str = Field(..., min_length=1, description="EDM value")
     aal: bool = Field(..., description="AAL flag")
-#@app.on_event("startup")
-#async def startup_event():
-#    initialize()
+
 
 @app.post("/uploadfile/")
 async def upload_file(file: UploadFile = File(...)):
@@ -67,16 +65,22 @@ async def column_mapper(data: List[Dict[Any, Any]]):
 
 class ReportRequest_PowerBI(BaseModel):
     edmValue: str
-    aal: bool
+    allPortfolios: bool
+    portfolios: str = None
+    allAnalysis: bool
+    analysis: str = None
 
 class ReportRequest_Excel(BaseModel):
     edmValue: str
-    aal: bool
+    allPortfolios: bool
+    portfolios: str = None
+    allAnalysis: bool
+    analysis: str = None
 
 @app.post('/generatePowerBIReport/')
 async def generate_powerbi_report(request: ReportRequest_PowerBI):
     try:
-        logger.info(f"Generating PowerBI report with EDM: {request.edmValue}, AAL: {request.aal}")
+        logger.info(f"Generating PowerBI report with EDM: {request.edmValue}")
         
         # Add your PowerBI report generation logic here
         # Simulate some processing time
@@ -98,7 +102,7 @@ async def generate_powerbi_report(request: ReportRequest_PowerBI):
 @app.post('/generateExcelReport/')
 async def generate_excel_report(request: ReportRequest_Excel):
     try:
-        logger.info(f"Generating Excel report with EDM: {request.edmValue}, AAL: {request.aal}")
+        logger.info(f"Generating Excel report with EDM: {request.edmValue}")
         
         # Add your Excel report generation logic here
         # Simulate some processing time
@@ -120,3 +124,6 @@ async def generate_excel_report(request: ReportRequest_Excel):
 @app.get("/health")
 async def health_check():
     return {"status": "healthy"}
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000)

@@ -9,7 +9,10 @@ type ReportType = 'Excel' | 'PowerBI';
 interface FormData {
   reportType: ReportType;
   edm: string;
-  aal: boolean;
+  allPortfolios: boolean;
+  portfolios: string;
+  allAnalysis: boolean;
+  analysis: string;
 }
 
 interface AlertState {
@@ -23,7 +26,10 @@ const ReportGeneration = () => {
   const [formData, setFormData] = useState<FormData>({
     reportType: 'PowerBI',
     edm: '',
-    aal: false
+    allPortfolios: true,
+    portfolios: '',
+    allAnalysis: true,
+    analysis: ''
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -59,7 +65,10 @@ const ReportGeneration = () => {
         },
         body: JSON.stringify({
           edmValue: formData.edm,
-          aal: formData.aal
+          allPortfolios: formData.allPortfolios,
+          portfolios: formData.portfolios,
+          allAnalysis: formData.allAnalysis,
+          analysis: formData.analysis
         })
       });
 
@@ -85,7 +94,7 @@ const ReportGeneration = () => {
           errorMessage = 'Server error. Please try again later.';
         }
       }
-      
+
       setAlert({
         type: 'error',
         message: errorMessage
@@ -166,19 +175,60 @@ const ReportGeneration = () => {
               />
             </div>
             
+
             <div className="flex items-center gap-2">
               <input
                 type="checkbox"
-                name="aal"
-                checked={formData.aal}
+                name="allPortfolios"
+                checked={formData.allPortfolios}
                 onChange={handleInputChange}
                 className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                id="aal"
+                id="allPortfolios"
               />
-              <label htmlFor="aal" className="text-sm font-medium text-gray-700">
-                AAL
+              <label htmlFor="allPortfolios" className="text-sm font-medium text-gray-700">
+                All Portfolios
               </label>
             </div>
+            {!formData.allPortfolios && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Portfolios</label>
+                <input
+                  type="text"
+                  name="portfolios"
+                  value={formData.portfolios}
+                  onChange={handleInputChange}
+                  className="mt-1 w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Enter Portfolios"
+                />
+              </div>
+            )}
+
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                name="allAnalysis"
+                checked={formData.allAnalysis}
+                onChange={handleInputChange}
+                className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                id="allAnalysis"
+              />
+              <label htmlFor="allAnalysis" className="text-sm font-medium text-gray-700">
+                All Analysis
+              </label>
+            </div>
+            {!formData.allAnalysis && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Analysis</label>
+                <input
+                  type="text"
+                  name="analysis"
+                  value={formData.analysis}
+                  onChange={handleInputChange}
+                  className="mt-1 w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Enter Analysis"
+                />
+              </div>
+            )}
           </div>
 
           <button 

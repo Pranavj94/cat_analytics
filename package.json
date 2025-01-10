@@ -2,12 +2,13 @@
   "name": "cat_analytics",
   "version": "0.1.0",
   "private": true,
-  "scripts": {
-    "dev": "concurrently \"npm run next-dev\" \"npm run api\"",
-    "next-dev": "next dev",
-    "api": "cd api && uvicorn main:app --reload --port 8000",
+  "scripts":  {
+    "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
+    "dev:frontend": "next dev",
+    "dev:backend": "uvicorn backend.main:app --reload",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "lint": "next lint"
   },
   "dependencies": {
     "@types/node": "22.10.5",
