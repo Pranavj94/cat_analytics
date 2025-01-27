@@ -56,7 +56,7 @@ async def column_mapper(data: List[Dict[Any, Any]]):
         logging.info(f"Received data: {data}")
         df = pd.DataFrame(data)
         transformed_data, mapping = main_utils.transform_column_names(df)
-        return transformed_data.to_dict(orient="records")
+        return {"transformed_data": transformed_data.to_dict(orient="records"), "mapping": mapping}
     except Exception as e:
         logging.error(f"Error processing data: {e}")
         raise HTTPException(status_code=500, detail=str(e))

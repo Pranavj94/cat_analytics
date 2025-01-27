@@ -68,7 +68,8 @@ const ReportGeneration = () => {
           allPortfolios: formData.allPortfolios,
           portfolios: formData.portfolios,
           allAnalysis: formData.allAnalysis,
-          analysis: formData.analysis
+          analysis: formData.analysis,
+
         })
       });
 

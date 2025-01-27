@@ -19,6 +19,18 @@ export default function Data() {
     }
   }, []);
 
+  // Add display section for mapping state
+  const renderMappingState = () => {
+    return (
+      <div className="bg-gray-100 p-4 mb-4 rounded">
+        <h3 className="font-bold mb-2">Current Mapping State:</h3>
+        <pre className="whitespace-pre-wrap">
+          {JSON.stringify(mapping, null, 2)}
+        </pre>
+      </div>
+    );
+  };
+
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     try {
       setIsUploading(true);
@@ -79,8 +91,9 @@ export default function Data() {
             headers: { 'Content-Type': 'application/json' },
         });
         
-        setUploadedData(response.data);
-        localStorage.setItem('uploadedData', JSON.stringify(response.data));
+        setUploadedData(response.data.transformed_data);
+        setMapping(response.data.mapping);
+        localStorage.setItem('uploadedData', JSON.stringify(response.data.transformed_data));
     } catch (error) {
         if (axios.isAxiosError(error)) {
             console.error('Error finding mapping:', error.response?.data || error.message);
@@ -91,7 +104,7 @@ export default function Data() {
 };
 
   return (
-    <div>
+    <div className="p-6">
       <div className="flex border-b border-gray-300 mb-4">
         <button
           className={`p-2 ${activeTab === 'import' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500'}`}
@@ -106,31 +119,51 @@ export default function Data() {
           Mapper
         </button>
       </div>
-      {activeTab === 'import' && (
+
+
+      {/* Tab Content */}
+      {activeTab === 'import' ? (
         <div>
-          <div {...getRootProps()} style={{ border: '2px dashed #cccccc', padding: '20px', textAlign: 'center' }}>
+          <div {...getRootProps()} className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
             <input {...getInputProps()} />
-            {isUploading ? <p>Uploading...</p> : <p>Drag & drop a file here, or click to select one</p>}
+            {isUploading ? (
+              <p>Uploading...</p>
+            ) : (
+              <p>Drag & drop a file here, or click to select one</p>
+            )}
           </div>
           {uploadedData && (
-            <div style={{ marginTop: '20px' }}>
-              <h2>Uploaded Data:</h2>
+            <div className="mt-6">
+              <h2 className="text-xl font-semibold mb-4">Uploaded Data:</h2>
               {renderTable(uploadedData)}
             </div>
           )}
         </div>
-      )}
-      {activeTab === 'mapper' && (
-        <div style={{ padding: '20px', textAlign: 'center' }}>
-          <div style={{ marginBottom: '20px' }}>
-            <button className="p-2 bg-blue-500 text-white rounded" onClick={handleFindMapping}>Find Mapping</button>
-          </div>
-          {uploadedData && (
-            <div style={{ marginTop: '20px' }}>
-              <h2>Uploaded Data:</h2>
-              {renderTable(uploadedData)}
+      ) : (
+        <div>
+          <button 
+            onClick={handleFindMapping}
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors mb-4"
+          >
+            Find Mapping
+          </button>
+          
+          {Object.keys(mapping).length > 0 && (
+            <div className="bg-gray-50 p-4 mb-4 rounded-lg shadow-sm">
+              <h3 className="font-semibold text-lg mb-2">Column Mappings:</h3>
+              <div className="grid grid-cols-2 gap-4">
+                {Object.entries(mapping).map(([original, mapped]) => (
+                  <div key={original} className="flex justify-between p-2 bg-white rounded border border-gray-200">
+                    <span className="text-gray-600">{original}</span>
+                    <span className="text-blue-600 font-medium">→</span>
+                    <span className="text-gray-800 font-medium">{String(mapped)}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
+          
+          {uploadedData && renderTable(uploadedData)}
         </div>
       )}
     </div>
