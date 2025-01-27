@@ -33,7 +33,7 @@ def transform_column_names(df):
   
     mapping = get_column_mapping(excel_columns, sample_data)
     
-    df = df.rename(columns=mapping)
+    #df = df.rename(columns=mapping)
   
     return df,mapping
 

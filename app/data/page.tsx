@@ -4,10 +4,42 @@ import React, { useCallback, useState, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import axios from 'axios';
 
+const EditableMappingTable = ({ mapping, setMapping }: { 
+  mapping: Record<string, string>, 
+  setMapping: (mapping: Record<string, string>) => void 
+}) => {
+  const handleMappingChange = (original: string, newValue: string) => {
+    setMapping({
+      ...mapping,
+      [original]: newValue
+    });
+  };
+
+  return (
+    <div className="bg-gray-50 p-4 mb-4 rounded-lg shadow-sm">
+      <h3 className="font-semibold text-lg mb-2">Column Mappings:</h3>
+      <div className="grid grid-cols-2 gap-4">
+        {Object.entries(mapping).map(([original, mapped]) => (
+          <div key={original} className="flex justify-between p-2 bg-white rounded border border-gray-200">
+            <span className="text-gray-600">{original}</span>
+            <span className="text-blue-600 font-medium">→</span>
+            <input
+              type="text"
+              value={String(mapped)}
+              onChange={(e) => handleMappingChange(original, e.target.value)}
+              className="text-gray-800 font-medium border rounded px-2"
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 export default function Data() {
   const [isUploading, setIsUploading] = useState(false);
   const [activeTab, setActiveTab] = useState('import');
-  const [uploadedData, setUploadedData] = useState(null);
+  const [uploadedData, setUploadedData] = useState<any[]>([]);
   const [mapping, setMapping] = useState({});
 
   useEffect(() => {
@@ -91,15 +123,41 @@ export default function Data() {
             headers: { 'Content-Type': 'application/json' },
         });
         
-        setUploadedData(response.data.transformed_data);
         setMapping(response.data.mapping);
-        localStorage.setItem('uploadedData', JSON.stringify(response.data.transformed_data));
+    
     } catch (error) {
         if (axios.isAxiosError(error)) {
             console.error('Error finding mapping:', error.response?.data || error.message);
         } else {
             console.error('Error finding mapping:', error);
         }
+    }
+};
+
+  const handleApplyMapping = async (data: any[], mapping: Record<string, string>) => {
+    try {
+        // Transform data by renaming columns according to mapping
+        const transformedData = data.map(row => {
+            const newRow: Record<string, any> = {};
+            Object.entries(row).forEach(([key, value]) => {
+                const newKey = mapping[key] || key;
+                newRow[newKey] = value;
+            });
+            return newRow;
+        });
+
+        // Update state and localStorage
+        setUploadedData(transformedData);
+        setMapping(mapping);
+        localStorage.setItem('uploadedData', JSON.stringify(transformedData));
+
+    } catch (error) {
+        if (axios.isAxiosError(error)) {
+            console.error('Error applying mapping:', error.response?.data || error.message);
+        } else {
+            console.error('Error applying mapping:', error);
+        }
+        throw error; // Re-throw to handle in calling code
     }
 };
 
@@ -147,20 +205,15 @@ export default function Data() {
           >
             Find Mapping
           </button>
+          <button 
+            onClick={() => handleApplyMapping(uploadedData, mapping)}
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors mb-4"
+          >
+            Apply Mappings
+          </button>
           
           {Object.keys(mapping).length > 0 && (
-            <div className="bg-gray-50 p-4 mb-4 rounded-lg shadow-sm">
-              <h3 className="font-semibold text-lg mb-2">Column Mappings:</h3>
-              <div className="grid grid-cols-2 gap-4">
-                {Object.entries(mapping).map(([original, mapped]) => (
-                  <div key={original} className="flex justify-between p-2 bg-white rounded border border-gray-200">
-                    <span className="text-gray-600">{original}</span>
-                    <span className="text-blue-600 font-medium">→</span>
-                    <span className="text-gray-800 font-medium">{String(mapped)}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <EditableMappingTable mapping={mapping} setMapping={setMapping} />
           )}
           
           {uploadedData && renderTable(uploadedData)}
