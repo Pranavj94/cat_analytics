@@ -4,6 +4,7 @@ import React, { useCallback, useState, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import axios from 'axios';
 
+
 const EditableMappingTable = ({ mapping, setMapping }: { 
   mapping: Record<string, string>, 
   setMapping: (mapping: Record<string, string>) => void 
