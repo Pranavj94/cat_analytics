@@ -2,7 +2,7 @@
   "name": "cat_analytics",
   "version": "0.1.0",
   "private": true,
-  "scripts":  {
+  "scripts": {
     "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
     "dev:frontend": "next dev",
     "dev:backend": "uvicorn backend.main:app --reload",
@@ -11,6 +11,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@radix-ui/react-slot": "^1.1.1",
     "@types/node": "22.10.5",
     "@types/react": "19.0.4",
     "@types/react-dom": "19.0.2",

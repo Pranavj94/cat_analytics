@@ -3,39 +3,8 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import axios from 'axios';
-
-
-const EditableMappingTable = ({ mapping, setMapping }: { 
-  mapping: Record<string, string>, 
-  setMapping: (mapping: Record<string, string>) => void 
-}) => {
-  const handleMappingChange = (original: string, newValue: string) => {
-    setMapping({
-      ...mapping,
-      [original]: newValue
-    });
-  };
-
-  return (
-    <div className="bg-gray-50 p-4 mb-4 rounded-lg shadow-sm">
-      <h3 className="font-semibold text-lg mb-2">Column Mappings:</h3>
-      <div className="grid grid-cols-2 gap-4">
-        {Object.entries(mapping).map(([original, mapped]) => (
-          <div key={original} className="flex justify-between p-2 bg-white rounded border border-gray-200">
-            <span className="text-gray-600">{original}</span>
-            <span className="text-blue-600 font-medium">→</span>
-            <input
-              type="text"
-              value={String(mapped)}
-              onChange={(e) => handleMappingChange(original, e.target.value)}
-              className="text-gray-800 font-medium border rounded px-2"
-            />
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-};
+import { Button } from "@/components/ui/button";
+import EditableMappingTable from "@/app/components/EditableMappingTable";
 
 export default function Data() {
   const [isUploading, setIsUploading] = useState(false);
@@ -200,18 +169,18 @@ export default function Data() {
         </div>
       ) : (
         <div>
-          <button 
+          <Button 
             onClick={handleFindMapping}
             className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors mb-4"
           >
             Find Mapping
-          </button>
-          <button 
+          </Button>
+          <Button 
             onClick={() => handleApplyMapping(uploadedData, mapping)}
             className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors mb-4"
           >
             Apply Mappings
-          </button>
+          </Button>
           
           {Object.keys(mapping).length > 0 && (
             <EditableMappingTable mapping={mapping} setMapping={setMapping} />
