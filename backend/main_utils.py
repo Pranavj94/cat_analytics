@@ -7,7 +7,7 @@ import ast
 from collections import defaultdict
 import json
 
-#from utils.occupancy_mapper_utils import map_new_type_to_number
+#from backend.utils.occuppancy_mapper_utils import map_new_type_to_number
 from backend.utils.construction_mapper_utils import *
 from backend.utils.column_mapper_utils import *
 #from backend.utils.date_cleaner_utils import *
@@ -73,16 +73,18 @@ def add_occuppancy_mapping(df):
     mapper_df['OCCTYPE']=df['OCCTYPE'].unique()
   
     mapped_occ_list = []
+    occupancy_mapping = dict()
     for item in mapper_df['OCCTYPE']:
         mapped_number = map_new_type_to_number(item)
         mapped_occ_list.append(mapped_number)
+        occupancy_mapping[item] = mapped_number.split(':')[1]
   
-    mapper_df['OCCTYPE mapped'] = mapped_occ_list
+# '    mapper_df['OCCTYPE mapped'] = mapped_occ_list
     
-    df=df.merge(mapper_df,how = 'left',on='OCCTYPE')
-    df['OCCSCHEME']='ATC'
+#     df=df.merge(mapper_df,how = 'left',on='OCCTYPE')
+#     df['OCCSCHEME']='ATC''
     
-    return df,df.to_html(classes="table table-striped table-hover table-responsive")
+    return df,occupancy_mapping
 
 
 def add_construction_mapping(df):

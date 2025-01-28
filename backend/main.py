@@ -1,5 +1,6 @@
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 import pandas as pd
 import io
 import uvicorn
@@ -21,7 +22,7 @@ app = FastAPI()
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=["*"],  # Adjust in production
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -35,15 +36,28 @@ class ReportRequest(BaseModel):
 @app.post("/uploadfile/")
 async def upload_file(file: UploadFile = File(...)):
     try:
+        # Set a timeout for reading the file
         contents = await file.read()
+        if not contents:
+            raise HTTPException(status_code=400, detail="Empty file")
+            
         if file.filename.endswith('.csv'):
             df = pd.read_csv(io.BytesIO(contents))
-        else:
+        elif file.filename.endswith(('.xls', '.xlsx')):
             df = pd.read_excel(io.BytesIO(contents))
-        return df.to_dict(orient="records")
+        else:
+            raise HTTPException(status_code=400, detail="Unsupported file format")
+            
+        return JSONResponse(
+            content=df.to_dict(orient="records"),
+            status_code=200
+        )
+        
     except Exception as e:
-        return {"error": str(e)}
-
+        return JSONResponse(
+            content={"error": str(e)},
+            status_code=500
+        )
 
 
 class DataItem(BaseModel):
@@ -67,6 +81,17 @@ async def construction_mapper(data: List[Dict[Any, Any]]):
         logging.info(f"Received data: {data}")
         df = pd.DataFrame(data)
         transformed_data, mapping = main_utils.add_construction_mapping(df)
+        return {"transformed_data": transformed_data.to_dict(orient="records"), "mapping": mapping}
+    except Exception as e:
+        logging.error(f"Error processing data: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+    
+@app.post("/occupancymapper/")
+async def occupancy_mapper(data: List[Dict[Any, Any]]):
+    try:
+        logging.info(f"Received data: {data}")
+        df = pd.DataFrame(data)
+        transformed_data, mapping = main_utils.add_occuppancy_mapping(df)
         return {"transformed_data": transformed_data.to_dict(orient="records"), "mapping": mapping}
     except Exception as e:
         logging.error(f"Error processing data: {e}")
@@ -137,4 +162,11 @@ async def health_check():
     return {"status": "healthy"}
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    # Increase timeout settings
+    uvicorn.run(
+        app, 
+        host="0.0.0.0", 
+        port=8000,
+        timeout_keep_alive=300,
+        limit_concurrency=1
+    )

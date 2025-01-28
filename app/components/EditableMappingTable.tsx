@@ -11,7 +11,7 @@ const EditableMappingTable = ({ mapping, setMapping }: {
   
   return (
     <div className="bg-gray-50 p-4 mb-4 rounded-lg shadow-sm">
-      <h3 className="font-semibold text-lg mb-2">Column Mappings:</h3>
+      <h3 className="font-semibold text-lg mb-2">Mappings:</h3>
       <div className="grid grid-cols-2 gap-4">
         {Object.entries(mapping).map(([original, mapped]) => (
           <div key={original} className="flex justify-between p-2 bg-white rounded border border-gray-200">

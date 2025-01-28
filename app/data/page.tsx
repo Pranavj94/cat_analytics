@@ -14,6 +14,7 @@ export default function Data() {
   const [uploadedData, setUploadedData] = useState<any[]>([]);
   const [mapping, setMapping] = useState({});
   const [constMapping, setConstMapping] = useState<Record<string, string>>({});
+  const [occMapping, setOccMapping] = useState<Record<string, string>>({});
 
   useEffect(() => {
     localStorage.clear();
@@ -45,7 +46,7 @@ export default function Data() {
 
       const response = await axios.post('http://localhost:8000/uploadfile/', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
-        timeout: 5000,
+        timeout: 60000, // 60 seconds timeout
       });
 
       const data = response.data;
@@ -94,6 +95,7 @@ export default function Data() {
         
         const response = await axios.post('http://localhost:8000/columnmapper/', dataToSend, {
             headers: { 'Content-Type': 'application/json' },
+            timeout: 60000, // 60 seconds timeout
         });
         
         setMapping(response.data.mapping);
@@ -141,6 +143,7 @@ const FindConstMapping = async () => {
       
       const response = await axios.post('http://localhost:8000/constructionmapper/', dataToSend, {
           headers: { 'Content-Type': 'application/json' },
+          timeout: 60000, // 60 seconds timeout
       });
       
       setConstMapping(response.data.mapping);
@@ -165,6 +168,52 @@ const ApplyConstMapping = async (
                 ...row,
                 BLDGCLASS: constructionMapping[row.BLDGCLASS] || row.BLDGCLASS,
                 BLDGSCHEME: 'RMS'
+            };
+        });
+
+        // Update state and localStorage
+        setUploadedData(transformedData);
+        localStorage.setItem('uploadedData', JSON.stringify(transformedData));
+        
+        return transformedData;
+    } catch (error) {
+        console.error('Error applying construction mapping:', error);
+        throw error;
+    }
+};
+
+const FindOccMapping = async () => {
+  try {
+      // Ensure uploadedData is an array
+      const dataToSend = Array.isArray(uploadedData) ? uploadedData : [uploadedData];
+      
+      const response = await axios.post('http://localhost:8000/occupancymapper/', dataToSend, {
+          headers: { 'Content-Type': 'application/json' },
+          timeout: 60000, // 60 seconds timeout
+      });
+      
+      setOccMapping(response.data.mapping);
+  
+  } catch (error) {
+      if (axios.isAxiosError(error)) {
+          console.error('Error finding mapping:', error.response?.data || error.message);
+      } else {
+          console.error('Error finding mapping:', error);
+      }
+  }
+};
+
+const ApplyOccMapping = async (
+    data: any[], 
+    OccupancyMapping: Record<string, string>
+) => {
+    try {
+        // Transform BLDNGCLASS values according to construction mapping
+        const transformedData = data.map(row => {
+            return {
+                ...row,
+                OCCTYPE: OccupancyMapping[row.OCCTYPE] || row.OCCTYPE,
+                OCCSCHEME: 'ATC'
             };
         });
 
@@ -244,14 +293,14 @@ const ApplyConstMapping = async (
         </div>
       ) : (
         <div className="mb-6">
-          <Button onClick={handleFindMapping} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors mr-4">
+          <Button onClick={FindOccMapping} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors mr-4">
             Find Mapping
           </Button>
-          <Button onClick={() => handleApplyMapping(uploadedData, mapping)} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
+          <Button onClick={() => ApplyOccMapping(uploadedData, occMapping)} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
             Apply Mappings
           </Button>
           {Object.keys(mapping).length > 0 && (
-            <EditableMappingTable mapping={mapping} setMapping={setMapping} />
+            <EditableMappingTable mapping={occMapping} setMapping={setOccMapping} />
           )}
         </div>
       )}
@@ -259,7 +308,6 @@ const ApplyConstMapping = async (
       {/* Show uploaded data table for all tabs */}
       {uploadedData && uploadedData.length > 0 && (
         <div className="mt-6">
-          <h2 className="text-xl font-semibold mb-4">Uploaded Data:</h2>
           {renderTable(uploadedData)}
         </div>
       )}
