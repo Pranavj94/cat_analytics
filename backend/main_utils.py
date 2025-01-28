@@ -8,7 +8,7 @@ from collections import defaultdict
 import json
 
 #from utils.occupancy_mapper_utils import map_new_type_to_number
-#from backend.utils.construction_mapper_utils import *
+from backend.utils.construction_mapper_utils import *
 from backend.utils.column_mapper_utils import *
 #from backend.utils.date_cleaner_utils import *
 #from backend.utils.geocoder_utils import *
@@ -93,16 +93,18 @@ def add_construction_mapping(df):
     mapper_const_df['BLDGCLASS']=df['BLDGCLASS'].unique()
     
     mapped_const_list = []
+    construction_mapping = dict()
     for item in mapper_const_df['BLDGCLASS']:
         mapped_number = map_new_const_type_to_number(item)
         mapped_const_list.append(mapped_number.split(':')[1])
+        construction_mapping[item] = mapped_number.split(':')[1]
   
-    mapper_const_df['BLDGCLASS mapped'] = mapped_const_list
+    # mapper_const_df['BLDGCLASS mapped'] = mapped_const_list
     
-    df=df.merge(mapper_const_df,how = 'left',on='BLDGCLASS')
-    df['BLDGSCHEME']='RMS'
+    # df=df.merge(mapper_const_df,how = 'left',on='BLDGCLASS')
+    # df['BLDGSCHEME']='RMS'
   
-    return df,df.to_html(classes="table table-striped table-hover table-responsive")
+    return df,construction_mapping
 
 
 

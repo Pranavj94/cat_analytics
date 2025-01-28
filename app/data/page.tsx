@@ -6,11 +6,14 @@ import axios from 'axios';
 import { Button } from "@/components/ui/button";
 import EditableMappingTable from "@/app/components/EditableMappingTable";
 
+
+
 export default function Data() {
   const [isUploading, setIsUploading] = useState(false);
   const [activeTab, setActiveTab] = useState('import');
   const [uploadedData, setUploadedData] = useState<any[]>([]);
   const [mapping, setMapping] = useState({});
+  const [constMapping, setConstMapping] = useState<Record<string, string>>({});
 
   useEffect(() => {
     localStorage.clear();
@@ -131,6 +134,50 @@ export default function Data() {
     }
 };
 
+const FindConstMapping = async () => {
+  try {
+      // Ensure uploadedData is an array
+      const dataToSend = Array.isArray(uploadedData) ? uploadedData : [uploadedData];
+      
+      const response = await axios.post('http://localhost:8000/constructionmapper/', dataToSend, {
+          headers: { 'Content-Type': 'application/json' },
+      });
+      
+      setConstMapping(response.data.mapping);
+  
+  } catch (error) {
+      if (axios.isAxiosError(error)) {
+          console.error('Error finding mapping:', error.response?.data || error.message);
+      } else {
+          console.error('Error finding mapping:', error);
+      }
+  }
+};
+
+const ApplyConstMapping = async (
+    data: any[], 
+    constructionMapping: Record<string, string>
+) => {
+    try {
+        // Transform BLDNGCLASS values according to construction mapping
+        const transformedData = data.map(row => {
+            return {
+                ...row,
+                BLDGCLASS: constructionMapping[row.BLDGCLASS] || row.BLDGCLASS
+            };
+        });
+
+        // Update state and localStorage
+        setUploadedData(transformedData);
+        localStorage.setItem('uploadedData', JSON.stringify(transformedData));
+        
+        return transformedData;
+    } catch (error) {
+        console.error('Error applying construction mapping:', error);
+        throw error;
+    }
+};
+
   return (
     <div className="p-6">
       <div className="flex border-b border-gray-300 mb-4">
@@ -146,8 +193,19 @@ export default function Data() {
         >
           Mapper
         </button>
+        <button
+          className={`p-2 ${activeTab === 'construction' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500'}`}
+          onClick={() => setActiveTab('construction')}
+        >
+          Construction
+        </button>
+        <button
+          className={`p-2 ${activeTab === 'occupancy' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500'}`}
+          onClick={() => setActiveTab('occupancy')}
+        >
+          Occupancy
+        </button>
       </div>
-
 
       {/* Tab Content */}
       {activeTab === 'import' ? (
@@ -167,7 +225,7 @@ export default function Data() {
             </div>
           )}
         </div>
-      ) : (
+      ) : activeTab === 'mapper' ? (
         <div>
           <Button 
             onClick={handleFindMapping}
@@ -181,12 +239,46 @@ export default function Data() {
           >
             Apply Mappings
           </Button>
-          
           {Object.keys(mapping).length > 0 && (
             <EditableMappingTable mapping={mapping} setMapping={setMapping} />
           )}
-          
-          {uploadedData && renderTable(uploadedData)}
+        </div>
+      ) : activeTab === 'construction' ? (
+        <div>
+          <Button
+            onClick={FindConstMapping}
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors mb-4"
+          >
+            Find Mapping
+          </Button>
+          <Button 
+            onClick={() => ApplyConstMapping(uploadedData, constMapping)}
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors mb-4"
+          >
+            Apply Mappings
+          </Button>
+          {Object.keys(constMapping).length > 0 && (
+            <EditableMappingTable mapping={constMapping} setMapping={setConstMapping} />
+          )}
+        </div>
+      ) : (
+        // Occupancy tab
+        <div>
+          <Button 
+            onClick={handleFindMapping}
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors mb-4"
+          >
+            Find Mapping
+          </Button>
+          <Button 
+            onClick={() => handleApplyMapping(uploadedData, mapping)}
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors mb-4"
+          >
+            Apply Mappings
+          </Button>
+          {Object.keys(mapping).length > 0 && (
+            <EditableMappingTable mapping={mapping} setMapping={setMapping} />
+          )}
         </div>
       )}
     </div>

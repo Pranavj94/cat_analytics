@@ -60,6 +60,17 @@ async def column_mapper(data: List[Dict[Any, Any]]):
     except Exception as e:
         logging.error(f"Error processing data: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+    
+@app.post("/constructionmapper/")
+async def construction_mapper(data: List[Dict[Any, Any]]):
+    try:
+        logging.info(f"Received data: {data}")
+        df = pd.DataFrame(data)
+        transformed_data, mapping = main_utils.add_construction_mapping(df)
+        return {"transformed_data": transformed_data.to_dict(orient="records"), "mapping": mapping}
+    except Exception as e:
+        logging.error(f"Error processing data: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 
