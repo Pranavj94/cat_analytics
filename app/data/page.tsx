@@ -163,7 +163,8 @@ const ApplyConstMapping = async (
         const transformedData = data.map(row => {
             return {
                 ...row,
-                BLDGCLASS: constructionMapping[row.BLDGCLASS] || row.BLDGCLASS
+                BLDGCLASS: constructionMapping[row.BLDGCLASS] || row.BLDGCLASS,
+                BLDGSCHEME: 'RMS'
             };
         });
 
