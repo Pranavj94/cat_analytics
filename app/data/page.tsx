@@ -207,36 +207,22 @@ const ApplyConstMapping = async (
         </button>
       </div>
 
-      {/* Tab Content */}
+      {/* Tab-specific content */}
       {activeTab === 'import' ? (
-        <div>
-          <div {...getRootProps()} className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-            <input {...getInputProps()} />
-            {isUploading ? (
-              <p>Uploading...</p>
-            ) : (
-              <p>Drag & drop a file here, or click to select one</p>
-            )}
-          </div>
-          {uploadedData && (
-            <div className="mt-6">
-              <h2 className="text-xl font-semibold mb-4">Uploaded Data:</h2>
-              {renderTable(uploadedData)}
-            </div>
+        <div {...getRootProps()} className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center mb-6">
+          <input {...getInputProps()} />
+          {isUploading ? (
+            <p>Uploading...</p>
+          ) : (
+            <p>Drag & drop a file here, or click to select one</p>
           )}
         </div>
       ) : activeTab === 'mapper' ? (
-        <div>
-          <Button 
-            onClick={handleFindMapping}
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors mb-4"
-          >
+        <div className="mb-6">
+          <Button onClick={handleFindMapping} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors mr-4">
             Find Mapping
           </Button>
-          <Button 
-            onClick={() => handleApplyMapping(uploadedData, mapping)}
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors mb-4"
-          >
+          <Button onClick={() => handleApplyMapping(uploadedData, mapping)} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
             Apply Mappings
           </Button>
           {Object.keys(mapping).length > 0 && (
@@ -244,17 +230,11 @@ const ApplyConstMapping = async (
           )}
         </div>
       ) : activeTab === 'construction' ? (
-        <div>
-          <Button
-            onClick={FindConstMapping}
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors mb-4"
-          >
+        <div className="mb-6">
+          <Button onClick={FindConstMapping} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors mr-4">
             Find Mapping
           </Button>
-          <Button 
-            onClick={() => ApplyConstMapping(uploadedData, constMapping)}
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors mb-4"
-          >
+          <Button onClick={() => ApplyConstMapping(uploadedData, constMapping)} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
             Apply Mappings
           </Button>
           {Object.keys(constMapping).length > 0 && (
@@ -262,23 +242,24 @@ const ApplyConstMapping = async (
           )}
         </div>
       ) : (
-        // Occupancy tab
-        <div>
-          <Button 
-            onClick={handleFindMapping}
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors mb-4"
-          >
+        <div className="mb-6">
+          <Button onClick={handleFindMapping} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors mr-4">
             Find Mapping
           </Button>
-          <Button 
-            onClick={() => handleApplyMapping(uploadedData, mapping)}
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors mb-4"
-          >
+          <Button onClick={() => handleApplyMapping(uploadedData, mapping)} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
             Apply Mappings
           </Button>
           {Object.keys(mapping).length > 0 && (
             <EditableMappingTable mapping={mapping} setMapping={setMapping} />
           )}
+        </div>
+      )}
+
+      {/* Show uploaded data table for all tabs */}
+      {uploadedData && uploadedData.length > 0 && (
+        <div className="mt-6">
+          <h2 className="text-xl font-semibold mb-4">Uploaded Data:</h2>
+          {renderTable(uploadedData)}
         </div>
       )}
     </div>
