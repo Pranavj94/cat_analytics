@@ -62,6 +62,9 @@ def run_geocoder(df):
     
     df=df.merge(address_mapper_df,how = 'left',on='full address')
     df.drop('full address',inplace=True,axis=1)
+
+    if 'LOCNUM' not in df.columns:
+        df['LOCNUM'] = range(1, len(df) + 1)
   
     return df
 
@@ -120,13 +123,11 @@ def get_data_cleaned(df,options):
     # Clean year built
     df['YEARBUILT']=clean_dates_function(df['YEARBUILT'])
 
-    if 'LOCNUM' not in df.columns:
-        df['LOCNUM'] = range(1, len(df) + 1)
+
         
     #df['Contents value'] = df['Contents value'].str.replace(',', '').astype(int)
     #df['Buildings value'] = df['Buildings value'].str.replace(',', '').astype(int)
 
-    df.drop('STATE',inplace=True,axis=1)
     #df = df.groupby(axis=1, level=0, sort=False).sum()
     #print(df.columns)
     
