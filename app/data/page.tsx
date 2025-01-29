@@ -111,8 +111,6 @@ export default function Data() {
 
   const handleApplyMapping = async (data: any[], mapping: Record<string, string>) => {
     try {
-        console.log('Input mapping:', mapping); // Debug log
-        console.log('Sample input row:', data[0]); // Debug log
 
         // Transform data by renaming columns according to mapping
         const transformedData = data.map((row, index) => {
@@ -131,7 +129,7 @@ export default function Data() {
             return newRow;
         });
 
-        console.log('Sample output row:', transformedData[0]); // Debug log
+
 
         // Update state and localStorage
         setUploadedData(transformedData);
@@ -236,6 +234,58 @@ const ApplyOccMapping = async (
     }
 };
 
+const RunGeocoder = async (data: any[]) => {
+  try {
+    const response = await axios.post('http://localhost:8000/geocoder/', data, {
+      headers: { 'Content-Type': 'application/json' },
+      timeout: 60000,
+    });
+    
+    const geocodedData = response.data.data;
+
+    if (!Array.isArray(geocodedData)) {
+      throw new Error('Invalid response format');
+    }
+    
+    // Update state and localStorage
+    setUploadedData(geocodedData);
+    localStorage.setItem('uploadedData', JSON.stringify(geocodedData));
+    
+    return geocodedData;
+    
+  } catch (error) {
+    console.error('Error during geocoding:', error);
+    throw error;
+  }
+};
+
+const RunCleaner = async (data: any[]) => {
+  try {
+
+    
+    const response = await axios.post('http://localhost:8000/cleaner/', data, {
+      headers: { 'Content-Type': 'application/json' },
+      timeout: 60000,
+    });
+    
+    const geocodedData = response.data;
+
+
+    
+    // Update state and localStorage
+    setUploadedData(geocodedData);
+    localStorage.setItem('uploadedData', JSON.stringify(geocodedData));
+    
+
+    return geocodedData;
+    
+  } catch (error) {
+    console.error('Error during geocoding:', error);
+
+    throw error;
+  }
+};
+
   return (
     <div className="p-6">
       <div className="flex border-b border-gray-300 mb-4">
@@ -262,6 +312,12 @@ const ApplyOccMapping = async (
           onClick={() => setActiveTab('occupancy')}
         >
           Occupancy
+        </button>
+        <button
+          className={`p-2 ${activeTab === 'cleaner' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500'}`}
+          onClick={() => setActiveTab('cleaner')}
+        >
+          Cleaner
         </button>
       </div>
 
@@ -299,7 +355,7 @@ const ApplyOccMapping = async (
             <EditableMappingTable mapping={constMapping} setMapping={setConstMapping} />
           )}
         </div>
-      ) : (
+      ) : activeTab === 'occupancy' ?(
         <div className="mb-6">
           <Button onClick={FindOccMapping} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors mr-4">
             Find Mapping
@@ -311,7 +367,17 @@ const ApplyOccMapping = async (
             <EditableMappingTable mapping={occMapping} setMapping={setOccMapping} />
           )}
         </div>
-      )}
+      ): (
+        <div className="mb-6">
+          <Button onClick={() => RunGeocoder(uploadedData)} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors mr-4">
+            Run Geocoder
+          </Button>
+          <Button onClick={() => RunCleaner(uploadedData)} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
+            Run Data Cleaner
+          </Button>
+        </div>
+      )
+      }
 
       {/* Show uploaded data table for all tabs */}
       {uploadedData && uploadedData.length > 0 && (

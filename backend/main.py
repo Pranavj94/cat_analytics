@@ -96,6 +96,26 @@ async def occupancy_mapper(data: List[Dict[Any, Any]]):
     except Exception as e:
         logging.error(f"Error processing data: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+    
+@app.post("/geocoder/")
+async def Run_Geocoder(data: List[Dict[Any, Any]]):
+    try:
+        df = pd.DataFrame(data)
+        transformed_data = main_utils.run_geocoder(df)
+        return {"data": transformed_data.to_dict(orient="records")}
+    except Exception as e:
+        logging.error(f"Error processing data: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+    
+@app.post("/cleaner/")
+async def Run_Cleaner(data: List[Dict[Any, Any]]):
+    try:
+        df = pd.DataFrame(data)
+        transformed_data, mapping = main_utils.add_occuppancy_mapping(df)
+        return {"transformed_data": transformed_data.to_dict(orient="records")}
+    except Exception as e:
+        logging.error(f"Error processing data: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 

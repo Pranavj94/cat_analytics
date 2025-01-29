@@ -10,8 +10,8 @@ import json
 from backend.utils.occuppancy_mapper_utils import *
 from backend.utils.construction_mapper_utils import *
 from backend.utils.column_mapper_utils import *
-#from backend.utils.date_cleaner_utils import *
-#from backend.utils.geocoder_utils import *
+from backend.utils.date_cleaner_utils import *
+from backend.utils.geocoder_utils import *
 
 
 
@@ -63,7 +63,7 @@ def run_geocoder(df):
     df=df.merge(address_mapper_df,how = 'left',on='full address')
     df.drop('full address',inplace=True,axis=1)
   
-    return df,df.to_html(classes="table table-striped table-hover table-responsive table-container")
+    return df
 
 
 def add_occuppancy_mapping(df):
