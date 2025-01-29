@@ -78,7 +78,7 @@ def add_occuppancy_mapping(df):
     for item in mapper_df['OCCTYPE']:
         mapped_number = map_new_type_to_number(item)
         mapped_occ_list.append(mapped_number)
-        occupancy_mapping[item] = mapped_number.split(':')[1]
+        occupancy_mapping[item] = mapped_number[0]
   
 # '    mapper_df['OCCTYPE mapped'] = mapped_occ_list
     
