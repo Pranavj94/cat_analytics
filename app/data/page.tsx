@@ -111,15 +111,27 @@ export default function Data() {
 
   const handleApplyMapping = async (data: any[], mapping: Record<string, string>) => {
     try {
+        console.log('Input mapping:', mapping); // Debug log
+        console.log('Sample input row:', data[0]); // Debug log
+
         // Transform data by renaming columns according to mapping
-        const transformedData = data.map(row => {
+        const transformedData = data.map((row, index) => {
             const newRow: Record<string, any> = {};
             Object.entries(row).forEach(([key, value]) => {
                 const newKey = mapping[key] || key;
+                if (key === 'Occupancy') {
+                    console.log(`Processing Occupancy in row ${index}:`, {
+                        originalKey: key,
+                        mappedKey: mapping[key],
+                        value: value
+                    });
+                }
                 newRow[newKey] = value;
             });
             return newRow;
         });
+
+        console.log('Sample output row:', transformedData[0]); // Debug log
 
         // Update state and localStorage
         setUploadedData(transformedData);
@@ -127,12 +139,8 @@ export default function Data() {
         localStorage.setItem('uploadedData', JSON.stringify(transformedData));
 
     } catch (error) {
-        if (axios.isAxiosError(error)) {
-            console.error('Error applying mapping:', error.response?.data || error.message);
-        } else {
-            console.error('Error applying mapping:', error);
-        }
-        throw error; // Re-throw to handle in calling code
+        console.error('Error in handleApplyMapping:', error);
+        throw error;
     }
 };
 

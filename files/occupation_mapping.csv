@@ -1,0 +1,274 @@
+Label,Occupancy
+0,Unknown
+1,Permanent Dwelling (single family housing)
+1,Owner-occupied detached dwellings.
+2,Permanent Dwelling (multi- family housing)
+3,Temporary Lodging
+3,Hotels and lodging places
+4,Group Institutional Housing
+4,"Residential care, such as:"
+4,College dormitories
+4,Nursing homes
+4,Retirement centers
+5,Retail Trade
+5,Retail stores and other retail trade
+6,Wholesale Trade
+6,Warehouses
+6,Sales offices
+6,Recreational related wholesale trade
+6,Other wholesale trade
+7,Personal and Repair Services
+7,"Laundry, cleaning and shoe repair"
+7,Funeral services and crematories
+7,Photo studios and miscellaneous personal services
+7,Electrical repair shops
+7,"Watch, clock, jewelry, furniture repair"
+7,Beauty and barber shops
+7,Automotive rental and leasing
+7,Automotive repair and services
+7,Automotive parking and car wash
+8,"Professional, Technical and Business Services"
+8,Office buildings
+8,Arrangement of passenger transportation
+8,Banking
+8,Credit agencies
+8,Security and commodity brokers
+8,Insurance carriers
+8,Insurance agents and brokers
+8,Real estate
+8,Miscellaneous repair shops
+8,Services to buildings
+8,Personnel supply services
+8,Computer and data processing services
+8,Management and consulting services
+8,Detective and protective services
+8,Equipment rental and leasing
+8,"Photofinishing, commercial photography"
+8,Other business services
+8,Advertising
+8,Legal services
+8,"Engineering, architectural services"
+8,"Accounting, auditing, and bookkeeping"
+9,Health Care Service
+9,Doctors’ and dentists’ offices
+9,Clinics
+9,Nursing and personal care
+9,Other medical and health services
+10,Entertainment and Recreation
+10,Bars
+10,Movie theaters
+10,"Dance halls, studios, and schools"
+10,Theaters
+10,Bowling alleys and pool halls
+10,Sports stadiums
+10,Racing and track operation
+10,Membership sports and recreation clubs
+10,Amusement and recreation services
+11,Parking
+11,Parking garages
+12,Heavy Fabrication and Assembly
+12,Complete guided missiles
+12,"Ammunition, except for small arms"
+12,Tanks and tank components
+12,Other ordnance and accessories
+12,Logging camps and logging contractors
+12,"Sawmills and planing mills, general"
+12,Hardwood dimension and flooring mills
+12,Special product sawmills
+12,Veneer and plywood
+12,Structural wood members
+12,Prefabricated wood buildings
+12,Wood preserving
+12,Particleboard
+12,Wood products
+12,Pulp mills
+12,"Paper mills, except building paper"
+12,Paperboard mills
+12,Building paper and board mills
+12,Tires and inner tubes
+12,Rubber and plastics footwear
+12,Reclaimed rubber
+12,Fabricated rubber products
+12,Miscellaneous plastics products
+12,Rubber and plastics hoses and belting
+12,"Metal cans, barrels, drums, pails"
+12,Heating and plumbing equipment
+12,Metal tools
+12,Steam engines and turbines
+12,Farm machinery
+12,Lawn and garden equipment
+12,Construction and mining machinery
+12,Elevators and moving stairways
+12,Food products machinery
+12,Industrial furnaces and ovens
+12,Automatic merchandising machines
+12,Commercial laundry equipment
+12,Refrigeration and heating equipment
+12,Heavy Fabrication and Assembly (continued)
+12,"Transformers, switchgear, and switchboard appa..."
+12,Household appliances
+12,Storage batteries
+12,Motor vehicles and equipment
+12,Aircraft and parts
+12,Ship and boat building and repairing
+12,Railroad equipment
+12,"Motorcycles, bicycles, and parts"
+12,"Travel trailers, campers, and mobile homes"
+13,Light Fabrication and Assembly
+13,Small arms and ammunition
+13,"Broad and narrow fabrics, yarn, and thread mills"
+13,Miscellaneous textile goods and floor coverings
+13,Apparel mills
+13,Curtains and draperies and house furnishings
+13,Automotive and apparel trimmings
+13,Wood kitchen cabinets
+13,Millwork
+13,Wood pallets and skids
+13,Household and office furniture and fixtures
+13,Envelopes
+13,Sanitary paper products
+13,Stationery products and bags
+13,Printing and publishing
+13,Leather tanning and finishing
+13,"Footwear, luggage, and leather goods"
+13,"Concrete, lime, gypsum, and abrasive products"
+13,"Gaskets, packing and sealing devices"
+13,Calculating and accounting machines
+13,Sales and balances
+13,Typewriters and office machines
+13,Instruments to measure electricity
+13,Electric lighting fixtures and wiring devices
+13,"Radio, TV, and communications equipment"
+13,Engine electrical equipment
+13,"Engineering, medical, photographic instruments"
+13,"Watches, clocks, and parts"
+13,"Jewelry, silverware, musical instruments manuf..."
+13,Lead pencils and art goods manufacturing
+14,Food and Drugs Processing
+14,Food manufacturing plants
+14,Tobacco manufacturers
+14,"Wines, liquor, soda, coffee manufacturing plants"
+14,Cooking oils
+14,Ice manufacturing
+15,Chemicals Processing
+15,Fertilizers and agricultural chemicals
+15,Gum and food chemicals
+15,"Adhesives, sealants, explosives, printing ink"
+15,Plastics and rubber
+15,Drugs
+15,"Soaps, detergents, polishes, sanitation goods"
+15,Paints and allied products
+16,Metal and Minerals Processing
+16,"Paving mixtures and blocks, asphalt"
+16,Glass containers and products
+16,"Cement, brick, clay products"
+16,Vitreous plumbing fixtures and china utensils
+16,Porcelain electric supplies
+16,Pottery products
+16,Asbestos products
+16,Minerals
+16,Iron and steel manufacturing
+16,Nonferrous metals manufacturing
+17,High Technology
+17,Electronic computing equipment
+17,Electronic components and semiconductors
+17,X-ray apparatus and tubes
+18,Construction
+18,Storage and maintenance facilities of a constr...
+19,Petroleum
+19,Petroleum refining and coal products
+19,Lubricating oils and greases
+19,"Pipe lines, except natural gas"
+20,Agriculture
+20,"Livestock, dairy farm products, eggs"
+20,"Cotton, grains, tobacco, fruits, nuts, vegetables"
+20,Sugar crops and oil bearing crops
+20,Forest and nursery products
+20,Forestry products
+20,Commercial fishing
+20,"Agricultural, forestry, and fishery services"
+20,Landscape and horticultural services
+21,Mining
+21,"Iron, ferroalloy ores, and nonferrous metal or..."
+21,Coal mining
+21,Offshore drilling towers
+21,Crude petroleum and natural gas
+21,Stone and clay mining and quarrying
+21,Chemical and fertilizer mineral mining
+22,Religion and Nonprofit
+22,"Business, labor, and civic organizations"
+22,Religious organizations
+22,Membership organizations
+22,Social services
+23,General Services
+23,Social services
+23,U.S. postal service
+23,"Federal, state, and local electric utilities"
+23,Local government passenger transit
+23,"Other federal, state, and local government ent..."
+23,Government industry
+24,Emergency Response Services
+24,"Other federal, state, and local government ent..."
+25,Education
+25,Elementary and secondary schools
+25,"Day-care centers, nursery schools"
+25,Other educational services (see note below for...
+26,Highway
+26,"Local, inter-urban passenger transit"
+26,Motor freight transport and warehousing
+26,Freight forwarders and other transportation se...
+27,Railroad
+27,Railroads and related services
+28,Air
+28,Air transportation
+28,Airport
+28,Freight forwarders and other transportation se...
+29,Sea/Water
+29,Water transportation
+29,Port Authority
+29,Freight forwarders and other transportation se...
+30,Electrical
+30,Electrical services
+31,Water
+31,Water supply
+31,Pumping stations
+31,"Storage facilities, tanks"
+31,Purification plants
+32,Sanitary Sewer
+32,Sewerage systems
+32,"Sanitary services, steam and irrigation systems"
+33,Natural Gas
+33,Gas production and distribution
+34,Telephone & Telegraph
+34,"Communications, except radio and TV"
+35,Communication (Radio and TV)
+35,Radio and TV broadcasting
+36,Flood Control
+36,Electrical services and utilities
+36,Water supply and sewerage systems
+36,"Other federal, state, and local government ent..."
+37,General Commercial
+38,General Industrial
+39,Miscellaneous
+39,"America Hurricane Models, ATC 40 produces loss..."
+39,that are identical to those obtained by specif...
+39,dwelling (ATC 2). In Mexico and Central and So...
+39,"Earthquake Models other than Chile, ATC 40 is ..."
+39,represent a general residential occupancy when...
+39,does not know if it is single-family or multi-...
+39,FAQ: What Does The Occupancy Code ATC 40 Repre...
+39,RMS Models? for information about how ATC 40 i...
+39,"other peril model regions, including Chile."
+41,Homeowner
+42,Multi-Family Dwelling– Homeowners Association
+43,Multi-Family Dwelling– Condominium Unit Owner
+44,Gasoline Service Station
+47,Restaurants
+48,Casinos
+49,Acute Care Services Hospitals
+50,OSHPD Acute Care Services Hospitals (Californi...
+51,Hotels - Large
+52,Hotels - Small and Medium
+53,Rental - General Commercial
+54,Universities and Colleges
+0,

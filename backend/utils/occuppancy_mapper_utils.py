@@ -32,7 +32,7 @@ def load_mapping(file_path):
     return dict(mapping)  # Convert defaultdict to regular dict
 
 # Load the existing mapping
-existing_mapping = load_mapping('files/Full_ATC_rag.csv')
+existing_mapping = load_mapping('files/occupation_mapping.csv')
 
 # Prepare data for vectorstore
 occ_texts = []

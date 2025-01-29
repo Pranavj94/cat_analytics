@@ -38,7 +38,6 @@ rms_columns = {
 
 # GPT 40mini
 def string_to_dict(input_string):
-    print(input_string)
     content = input_string.content  
   
     # Use regex to find the dictionary part  

@@ -7,7 +7,7 @@ import ast
 from collections import defaultdict
 import json
 
-#from backend.utils.occuppancy_mapper_utils import map_new_type_to_number
+from backend.utils.occuppancy_mapper_utils import *
 from backend.utils.construction_mapper_utils import *
 from backend.utils.column_mapper_utils import *
 #from backend.utils.date_cleaner_utils import *
@@ -34,7 +34,8 @@ def transform_column_names(df):
     mapping = get_column_mapping(excel_columns, sample_data)
     
     #df = df.rename(columns=mapping)
-  
+    print('Df columns',df.columns)
+    print('Column mapping',mapping)
     return df,mapping
 
 
