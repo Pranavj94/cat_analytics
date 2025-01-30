@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/breadcrumb"
 
 import EditableMappingTable from "@/app/components/EditableMappingTable";
-import { FiUpload, FiMap, FiHome, FiUsers, FiTool } from "react-icons/fi";
+import { FiUpload, FiMap, FiHome, FiUsers, FiTool, FiDownload } from "react-icons/fi";
 
 export default function Data() {
   const [isUploading, setIsUploading] = useState(false);
@@ -294,6 +294,23 @@ const RunCleaner = async (data: any[]) => {
   }
 };
 
+const exportCSV = (data: any[]) => {
+  const csvContent = [
+    Object.keys(data[0]).join(','), // header row
+    ...data.map(row => Object.values(row).join(',')) // data rows
+  ].join('\n');
+
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.setAttribute('href', url);
+  link.setAttribute('download', 'exported_data.csv');
+  link.style.visibility = 'hidden';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
+
   return (
     <div className="p-6">
       <div className="border border-gray-200 rounded-lg p-4 mb-4 bg-gray-50">
@@ -383,6 +400,23 @@ const RunCleaner = async (data: any[]) => {
                 Cleaner
               </BreadcrumbLink>
             </BreadcrumbItem>
+            <BreadcrumbSeparator className="text-gray-400">→</BreadcrumbSeparator>
+            <BreadcrumbItem>
+              <BreadcrumbLink 
+                onClick={() => setActiveTab('export')}
+                className={`
+                  px-3 py-2 rounded-md transition-all duration-200 cursor-pointer
+                  flex items-center gap-2
+                  ${activeTab === 'export' 
+                    ? 'text-blue-600 font-medium bg-blue-50' 
+                    : 'text-gray-600 hover:text-blue-500 hover:bg-gray-50'
+                  }
+                `}
+              >
+                <FiDownload className="text-lg" />
+                Export
+              </BreadcrumbLink>
+            </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
       </div>
@@ -432,7 +466,7 @@ const RunCleaner = async (data: any[]) => {
             <EditableMappingTable mapping={occMapping} setMapping={setOccMapping} />
           )}
         </div>
-      ): (
+      ): activeTab === 'cleaner' ? (
         <div className="mb-6">
           <Button onClick={() => RunGeocoder(uploadedData)} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors mr-4">
             Run Geocoder
@@ -441,8 +475,13 @@ const RunCleaner = async (data: any[]) => {
             Run Data Cleaner
           </Button>
         </div>
-      )
-      }
+      ) : activeTab === 'export' ? (
+        <div className="mb-6">
+          <Button onClick={() => exportCSV(uploadedData)} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
+            Export Data
+          </Button>
+        </div>
+      ) : null}
 
       {/* Show uploaded data table for all tabs */}
       {uploadedData && uploadedData.length > 0 && (
