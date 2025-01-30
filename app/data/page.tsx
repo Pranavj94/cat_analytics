@@ -14,9 +14,16 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
-
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb"
 
 import EditableMappingTable from "@/app/components/EditableMappingTable";
+import { FiUpload, FiMap, FiHome, FiUsers, FiTool } from "react-icons/fi";
 
 export default function Data() {
   const [isUploading, setIsUploading] = useState(false);
@@ -34,8 +41,6 @@ export default function Data() {
       setUploadedData(JSON.parse(storedData));
     }
   }, []);
-
-
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     try {
@@ -291,39 +296,96 @@ const RunCleaner = async (data: any[]) => {
 
   return (
     <div className="p-6">
-      <div className="flex border-b border-gray-300 mb-4">
-        <button
-          className={`p-2 ${activeTab === 'import' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500'}`}
-          onClick={() => setActiveTab('import')}
-        >
-          Import
-        </button>
-        <button
-          className={`p-2 ${activeTab === 'mapper' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500'}`}
-          onClick={() => setActiveTab('mapper')}
-        >
-          Mapper
-        </button>
-        <button
-          className={`p-2 ${activeTab === 'construction' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500'}`}
-          onClick={() => setActiveTab('construction')}
-        >
-          Construction
-        </button>
-        <button
-          className={`p-2 ${activeTab === 'occupancy' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500'}`}
-          onClick={() => setActiveTab('occupancy')}
-        >
-          Occupancy
-        </button>
-        <button
-          className={`p-2 ${activeTab === 'cleaner' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500'}`}
-          onClick={() => setActiveTab('cleaner')}
-        >
-          Cleaner
-        </button>
+      <div className="border border-gray-200 rounded-lg p-4 mb-4 bg-gray-50">
+        <Breadcrumb>
+          <BreadcrumbList className="flex items-center gap-6">
+            <BreadcrumbItem>
+              <BreadcrumbLink 
+                onClick={() => setActiveTab('import')}
+                className={`
+                  px-3 py-2 rounded-md transition-all duration-200 cursor-pointer
+                  flex items-center gap-2
+                  ${activeTab === 'import' 
+                    ? 'text-blue-600 font-medium bg-blue-50' 
+                    : 'text-gray-600 hover:text-blue-500 hover:bg-gray-50'
+                  }
+                `}
+              >
+                <FiUpload className="text-lg" />
+                Import
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator className="text-gray-400">→</BreadcrumbSeparator>
+            <BreadcrumbItem>
+              <BreadcrumbLink 
+                onClick={() => setActiveTab('mapper')}
+                className={`
+                  px-3 py-2 rounded-md transition-all duration-200 cursor-pointer
+                  flex items-center gap-2
+                  ${activeTab === 'mapper' 
+                    ? 'text-blue-600 font-medium bg-blue-50' 
+                    : 'text-gray-600 hover:text-blue-500 hover:bg-gray-50'
+                  }
+                `}
+              >
+                <FiMap className="text-lg" />
+                Mapper
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator className="text-gray-400">→</BreadcrumbSeparator>
+            <BreadcrumbItem>
+              <BreadcrumbLink 
+                onClick={() => setActiveTab('construction')}
+                className={`
+                  px-3 py-2 rounded-md transition-all duration-200 cursor-pointer
+                  flex items-center gap-2
+                  ${activeTab === 'construction' 
+                    ? 'text-blue-600 font-medium bg-blue-50' 
+                    : 'text-gray-600 hover:text-blue-500 hover:bg-gray-50'
+                  }
+                `}
+              >
+                <FiHome className="text-lg" />
+                Construction
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator className="text-gray-400">→</BreadcrumbSeparator>
+            <BreadcrumbItem>
+              <BreadcrumbLink 
+                onClick={() => setActiveTab('occupancy')}
+                className={`
+                  px-3 py-2 rounded-md transition-all duration-200 cursor-pointer
+                  flex items-center gap-2
+                  ${activeTab === 'occupancy' 
+                    ? 'text-blue-600 font-medium bg-blue-50' 
+                    : 'text-gray-600 hover:text-blue-500 hover:bg-gray-50'
+                  }
+                `}
+              >
+                <FiUsers className="text-lg" />
+                Occupancy
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator className="text-gray-400">→</BreadcrumbSeparator>
+            <BreadcrumbItem>
+              <BreadcrumbLink 
+                onClick={() => setActiveTab('cleaner')}
+                className={`
+                  px-3 py-2 rounded-md transition-all duration-200 cursor-pointer
+                  flex items-center gap-2
+                  ${activeTab === 'cleaner' 
+                    ? 'text-blue-600 font-medium bg-blue-50' 
+                    : 'text-gray-600 hover:text-blue-500 hover:bg-gray-50'
+                  }
+                `}
+              >
+                <FiTool className="text-lg" />
+                Cleaner
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
       </div>
-
       {/* Tab-specific content */}
       {activeTab === 'import' ? (
         <div {...getRootProps()} className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center mb-6">
