@@ -4,9 +4,19 @@ import React, { useCallback, useState, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import axios from 'axios';
 import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+
+
+
 import EditableMappingTable from "@/app/components/EditableMappingTable";
-
-
 
 export default function Data() {
   const [isUploading, setIsUploading] = useState(false);
@@ -25,17 +35,7 @@ export default function Data() {
     }
   }, []);
 
-  // Add display section for mapping state
-  const renderMappingState = () => {
-    return (
-      <div className="bg-gray-100 p-4 mb-4 rounded">
-        <h3 className="font-bold mb-2">Current Mapping State:</h3>
-        <pre className="whitespace-pre-wrap">
-          {JSON.stringify(mapping, null, 2)}
-        </pre>
-      </div>
-    );
-  };
+
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     try {
@@ -67,24 +67,27 @@ export default function Data() {
     const headers = Object.keys(data[0]);
 
     return (
-      <table className="min-w-full bg-white">
-        <thead>
-          <tr>
-            {headers.map((header) => (
-              <th key={header} className="py-2 px-4 border-b border-gray-300">{header}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((row, rowIndex) => (
-            <tr key={rowIndex}>
+      <div className="rounded-md border">
+        <Table>
+          <TableCaption>SOV</TableCaption>
+          <TableHeader>
+            <TableRow>
               {headers.map((header) => (
-                <td key={header} className="py-2 px-4 border-b border-gray-300">{row[header]}</td>
+                <TableHead key={header}>{header}</TableHead>
               ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {data.map((row, rowIndex) => (
+              <TableRow key={rowIndex}>
+                {headers.map((header) => (
+                  <TableCell key={`${rowIndex}-${header}`}>{row[header]}</TableCell>
+                ))}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
     );
   };
 
