@@ -97,12 +97,10 @@ export default function Data() {
     );
   };
 
-
-
   return (
     <div className="p-6">
-      <div className="border border-gray-200 rounded-lg p-4 mb-4 bg-gray-50">
-        <Breadcrumb>
+      <div className="border border-gray-200 rounded-lg p-4 mb-2 bg-gray-50"> {/* Reduced margin-bottom */}
+        <Breadcrumb className="mt-0"> {/* Reduced margin-top */}
           <BreadcrumbList className="flex items-center gap-6">
             <BreadcrumbItem>
               <BreadcrumbLink 
@@ -111,8 +109,8 @@ export default function Data() {
                   px-3 py-2 rounded-md transition-all duration-200 cursor-pointer
                   flex items-center gap-2
                   ${activeTab === 'import' 
-                    ? 'text-blue-600 font-medium bg-blue-50' 
-                    : 'text-gray-600 hover:text-blue-500 hover:bg-gray-50'
+                    ? 'text-black font-medium bg-custom-yellow' 
+                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                   }
                 `}
               >
@@ -128,8 +126,8 @@ export default function Data() {
                   px-3 py-2 rounded-md transition-all duration-200 cursor-pointer
                   flex items-center gap-2
                   ${activeTab === 'mapper' 
-                    ? 'text-blue-600 font-medium bg-blue-50' 
-                    : 'text-gray-600 hover:text-blue-500 hover:bg-gray-50'
+                    ? 'text-black font-medium bg-custom-yellow' 
+                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                   }
                 `}
               >
@@ -145,8 +143,8 @@ export default function Data() {
                   px-3 py-2 rounded-md transition-all duration-200 cursor-pointer
                   flex items-center gap-2
                   ${activeTab === 'construction' 
-                    ? 'text-blue-600 font-medium bg-blue-50' 
-                    : 'text-gray-600 hover:text-blue-500 hover:bg-gray-50'
+                    ? 'text-black font-medium bg-custom-yellow' 
+                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                   }
                 `}
               >
@@ -162,8 +160,8 @@ export default function Data() {
                   px-3 py-2 rounded-md transition-all duration-200 cursor-pointer
                   flex items-center gap-2
                   ${activeTab === 'occupancy' 
-                    ? 'text-blue-600 font-medium bg-blue-50' 
-                    : 'text-gray-600 hover:text-blue-500 hover:bg-gray-50'
+                    ? 'text-black font-medium bg-custom-yellow' 
+                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                   }
                 `}
               >
@@ -179,8 +177,8 @@ export default function Data() {
                   px-3 py-2 rounded-md transition-all duration-200 cursor-pointer
                   flex items-center gap-2
                   ${activeTab === 'cleaner' 
-                    ? 'text-blue-600 font-medium bg-blue-50' 
-                    : 'text-gray-600 hover:text-blue-500 hover:bg-gray-50'
+                    ? 'text-black font-medium bg-custom-yellow' 
+                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                   }
                 `}
               >
@@ -196,8 +194,8 @@ export default function Data() {
                   px-3 py-2 rounded-md transition-all duration-200 cursor-pointer
                   flex items-center gap-2
                   ${activeTab === 'export' 
-                    ? 'text-blue-600 font-medium bg-blue-50' 
-                    : 'text-gray-600 hover:text-blue-500 hover:bg-gray-50'
+                    ? 'text-black font-medium bg-custom-yellow' 
+                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                   }
                 `}
               >
@@ -220,10 +218,10 @@ export default function Data() {
         </div>
       ) : activeTab === 'mapper' ? (
         <div className="mb-6">
-          <Button onClick={() => api.handleFindMapping(uploadedData,setMapping)} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors mr-4">
+          <Button onClick={() => api.handleFindMapping(uploadedData,setMapping)} className="px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-950 transition-colors mr-4">
             Find Mapping
-          </Button>
-          <Button onClick={() => api.handleApplyMapping(uploadedData, mapping,setUploadedData,setMapping)} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
+          </Button> 
+          <Button onClick={() => api.handleApplyMapping(uploadedData, mapping,setUploadedData,setMapping)} className="px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-950 transition-colors mr-4">
             Apply Mappings
           </Button>
           {Object.keys(mapping).length > 0 && (
@@ -232,40 +230,40 @@ export default function Data() {
         </div>
       ) : activeTab === 'construction' ? (
         <div className="mb-6">
-          <Button onClick={() => api.FindConstMapping(uploadedData,setConstMapping)} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors mr-4">
+          <Button onClick={() => api.FindConstMapping(uploadedData,setConstMapping)} className="px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-950 transition-colors mr-4">
             Find Mapping
           </Button>
-          <Button onClick={() => api.ApplyConstMapping(uploadedData, constMapping,setUploadedData)} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
-            Apply Mappings
-          </Button>
-          {Object.keys(constMapping).length > 0 && (
-            <EditableMappingTable mapping={constMapping} setMapping={setConstMapping} />
-          )}
-        </div>
-      ) : activeTab === 'occupancy' ?(
-        <div className="mb-6">
-          <Button onClick={() => api.FindOccMapping(uploadedData,setOccMapping)} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors mr-4">
-            Find Mapping
-          </Button>
-          <Button onClick={() => api.ApplyOccMapping(uploadedData, occMapping,setUploadedData)} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
+          <Button onClick={() => api.ApplyConstMapping(uploadedData, constMapping,setUploadedData)} className="px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-950 transition-colors">
             Apply Mappings
           </Button>
           {Object.keys(mapping).length > 0 && (
-            <EditableMappingTable mapping={occMapping} setMapping={setOccMapping} />
+            <EditableMappingTable mapping={mapping} setMapping={setMapping} />
           )}
         </div>
-      ): activeTab === 'cleaner' ? (
+      ) : activeTab === 'occupancy' ? (
         <div className="mb-6">
-          <Button onClick={() => api.RunGeocoder(uploadedData,setUploadedData)} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors mr-4">
+          <Button onClick={() => api.FindOccMapping(uploadedData,setOccMapping)} className="px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-950 transition-colors mr-4">
+            Find Mapping
+          </Button>
+          <Button onClick={() => api.ApplyOccMapping(uploadedData, occMapping,setUploadedData)} className="px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-950 transition-colors">
+            Apply Mappings
+          </Button>
+          {Object.keys(mapping).length > 0 && (
+            <EditableMappingTable mapping={mapping} setMapping={setMapping} />
+          )}
+        </div>
+      ) : activeTab === 'cleaner' ? (
+        <div className="mb-6">
+          <Button onClick={() => api.RunGeocoder(uploadedData,setUploadedData)} className="px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-950 transition-colors mr-4">
             Run Geocoder
           </Button>
-          <Button onClick={() => api.RunCleaner(uploadedData,setUploadedData)} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
+          <Button onClick={() => api.RunCleaner(uploadedData,setUploadedData)} className="px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-950 transition-colors">
             Run Data Cleaner
           </Button>
         </div>
       ) : activeTab === 'export' ? (
         <div className="mb-6">
-          <Button onClick={() => api.exportCSV(uploadedData)} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
+          <Button onClick={() => api.exportCSV(uploadedData)} className="px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-950 transition-colors">
             Export Data
           </Button>
         </div>
