@@ -2,11 +2,7 @@
 
 import React, { useState, FormEvent } from 'react';
 import { AlertCircle, CheckCircle2 } from 'lucide-react';
-import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Checkbox } from '@/components/ui/checkbox';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Alert, AlertTitle, AlertDescription } from '../../components/ui/alert';
 
 type ReportType = 'Excel' | 'PowerBI';
 
@@ -73,6 +69,7 @@ const ReportGeneration = () => {
           portfolios: formData.portfolios,
           allAnalysis: formData.allAnalysis,
           analysis: formData.analysis,
+
         })
       });
 
@@ -132,28 +129,44 @@ const ReportGeneration = () => {
         <form onSubmit={generateReport} className="mt-6 space-y-6">
           <div className="bg-white p-6 rounded-lg shadow-sm">
             <h3 className="text-lg font-semibold text-gray-900">Report Type</h3>
-            <RadioGroup
-              value={formData.reportType}
-              onValueChange={(value) => setFormData(prev => ({ ...prev, reportType: value as ReportType }))}
-              className="flex gap-4 mt-2"
-            >
-              <RadioGroupItem value="Excel" id="excel" className="cursor-pointer p-3 border rounded-lg transition-colors">
-                <label htmlFor="excel" className={`cursor-pointer ${formData.reportType === 'Excel' ? 'bg-blue-500 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'}`}>
-                  Excel
-                </label>
-              </RadioGroupItem>
-              <RadioGroupItem value="PowerBI" id="powerbi" className="cursor-pointer p-3 border rounded-lg transition-colors">
-                <label htmlFor="powerbi" className={`cursor-pointer ${formData.reportType === 'PowerBI' ? 'bg-blue-500 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'}`}>
-                  PowerBI
-                </label>
-              </RadioGroupItem>
-            </RadioGroup>
+            <div className="flex gap-4 mt-2">
+              <label className={`cursor-pointer p-3 border rounded-lg transition-colors ${
+                formData.reportType === 'Excel' 
+                  ? 'bg-blue-500 text-white border-blue-600' 
+                  : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+              }`}>
+                <input
+                  type="radio"
+                  name="reportType"
+                  value="Excel"
+                  checked={formData.reportType === 'Excel'}
+                  onChange={handleInputChange}
+                  className="hidden"
+                />
+                Excel
+              </label>
+              <label className={`cursor-pointer p-3 border rounded-lg transition-colors ${
+                formData.reportType === 'PowerBI'
+                  ? 'bg-blue-500 text-white border-blue-600'
+                  : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+              }`}>
+                <input
+                  type="radio"
+                  name="reportType"
+                  value="PowerBI"
+                  checked={formData.reportType === 'PowerBI'}
+                  onChange={handleInputChange}
+                  className="hidden"
+                />
+                PowerBI
+              </label>
+            </div>
           </div>
 
           <div className="bg-white p-6 rounded-lg shadow-sm space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700">EDM</label>
-              <Input
+              <input
                 type="text"
                 name="edm"
                 value={formData.edm}
@@ -163,11 +176,13 @@ const ReportGeneration = () => {
               />
             </div>
             
+
             <div className="flex items-center gap-2">
-              <Checkbox
+              <input
+                type="checkbox"
                 name="allPortfolios"
                 checked={formData.allPortfolios}
-                onCheckedChange={(checked) => setFormData(prev => ({ ...prev, allPortfolios: checked as boolean }))}
+                onChange={handleInputChange}
                 className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                 id="allPortfolios"
               />
@@ -178,7 +193,7 @@ const ReportGeneration = () => {
             {!formData.allPortfolios && (
               <div>
                 <label className="block text-sm font-medium text-gray-700">Portfolios</label>
-                <Input
+                <input
                   type="text"
                   name="portfolios"
                   value={formData.portfolios}
@@ -190,10 +205,11 @@ const ReportGeneration = () => {
             )}
 
             <div className="flex items-center gap-2">
-              <Checkbox
+              <input
+                type="checkbox"
                 name="allAnalysis"
                 checked={formData.allAnalysis}
-                onCheckedChange={(checked) => setFormData(prev => ({ ...prev, allAnalysis: checked as boolean }))}
+                onChange={handleInputChange}
                 className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                 id="allAnalysis"
               />
@@ -204,7 +220,7 @@ const ReportGeneration = () => {
             {!formData.allAnalysis && (
               <div>
                 <label className="block text-sm font-medium text-gray-700">Analysis</label>
-                <Input
+                <input
                   type="text"
                   name="analysis"
                   value={formData.analysis}
@@ -216,13 +232,17 @@ const ReportGeneration = () => {
             )}
           </div>
 
-          <Button 
+          <button 
             type="submit"
             disabled={isLoading}
-            className={`w-full px-4 py-2 text-white rounded-lg shadow-sm transition-colors ${isLoading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600'}`}
+            className={`w-full px-4 py-2 text-white rounded-lg shadow-sm transition-colors ${
+              isLoading
+                ? 'bg-blue-400 cursor-not-allowed'
+                : 'bg-blue-500 hover:bg-blue-600'
+            }`}
           >
             {isLoading ? 'Generating Report...' : 'Generate Report'}
-          </Button>
+          </button>
         </form>
       </main>
     </div>
