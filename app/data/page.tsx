@@ -4,6 +4,7 @@ import React, { useCallback, useState, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import axios from 'axios';
 import { Button } from "@/components/ui/button";
+import  * as api from '@/app/routes/api';
 import {
   Table,
   TableBody,
@@ -72,7 +73,7 @@ export default function Data() {
     const headers = Object.keys(data[0]);
 
     return (
-      <div className="rounded-md border">
+      <div className="rounded-md border overflow-x-auto overflow-y-auto">
         <Table>
           <TableCaption>SOV</TableCaption>
           <TableHeader>
@@ -96,220 +97,7 @@ export default function Data() {
     );
   };
 
-  const handleFindMapping = async () => {
-    try {
-        // Ensure uploadedData is an array
-        const dataToSend = Array.isArray(uploadedData) ? uploadedData : [uploadedData];
-        
-        const response = await axios.post('http://localhost:8000/columnmapper/', dataToSend, {
-            headers: { 'Content-Type': 'application/json' },
-            timeout: 60000, // 60 seconds timeout
-        });
-        
-        setMapping(response.data.mapping);
-    
-    } catch (error) {
-        if (axios.isAxiosError(error)) {
-            console.error('Error finding mapping:', error.response?.data || error.message);
-        } else {
-            console.error('Error finding mapping:', error);
-        }
-    }
-};
 
-  const handleApplyMapping = async (data: any[], mapping: Record<string, string>) => {
-    try {
-
-        // Transform data by renaming columns according to mapping
-        const transformedData = data.map((row, index) => {
-            const newRow: Record<string, any> = {};
-            Object.entries(row).forEach(([key, value]) => {
-                const newKey = mapping[key] || key;
-                if (key === 'Occupancy') {
-                    console.log(`Processing Occupancy in row ${index}:`, {
-                        originalKey: key,
-                        mappedKey: mapping[key],
-                        value: value
-                    });
-                }
-                newRow[newKey] = value;
-            });
-            return newRow;
-        });
-
-
-
-        // Update state and localStorage
-        setUploadedData(transformedData);
-        setMapping(mapping);
-        localStorage.setItem('uploadedData', JSON.stringify(transformedData));
-
-    } catch (error) {
-        console.error('Error in handleApplyMapping:', error);
-        throw error;
-    }
-};
-
-const FindConstMapping = async () => {
-  try {
-      // Ensure uploadedData is an array
-      const dataToSend = Array.isArray(uploadedData) ? uploadedData : [uploadedData];
-      
-      const response = await axios.post('http://localhost:8000/constructionmapper/', dataToSend, {
-          headers: { 'Content-Type': 'application/json' },
-          timeout: 60000, // 60 seconds timeout
-      });
-      
-      setConstMapping(response.data.mapping);
-  
-  } catch (error) {
-      if (axios.isAxiosError(error)) {
-          console.error('Error finding mapping:', error.response?.data || error.message);
-      } else {
-          console.error('Error finding mapping:', error);
-      }
-  }
-};
-
-const ApplyConstMapping = async (
-    data: any[], 
-    constructionMapping: Record<string, string>
-) => {
-    try {
-        // Transform BLDNGCLASS values according to construction mapping
-        const transformedData = data.map(row => {
-            return {
-                ...row,
-                BLDGCLASS: constructionMapping[row.BLDGCLASS] || row.BLDGCLASS,
-                BLDGSCHEME: 'RMS'
-            };
-        });
-
-        // Update state and localStorage
-        setUploadedData(transformedData);
-        localStorage.setItem('uploadedData', JSON.stringify(transformedData));
-        
-        return transformedData;
-    } catch (error) {
-        console.error('Error applying construction mapping:', error);
-        throw error;
-    }
-};
-
-const FindOccMapping = async () => {
-  try {
-      // Ensure uploadedData is an array
-      const dataToSend = Array.isArray(uploadedData) ? uploadedData : [uploadedData];
-      
-      const response = await axios.post('http://localhost:8000/occupancymapper/', dataToSend, {
-          headers: { 'Content-Type': 'application/json' },
-          timeout: 60000, // 60 seconds timeout
-      });
-      
-      setOccMapping(response.data.mapping);
-  
-  } catch (error) {
-      if (axios.isAxiosError(error)) {
-          console.error('Error finding mapping:', error.response?.data || error.message);
-      } else {
-          console.error('Error finding mapping:', error);
-      }
-  }
-};
-
-const ApplyOccMapping = async (
-    data: any[], 
-    OccupancyMapping: Record<string, string>
-) => {
-    try {
-        // Transform BLDNGCLASS values according to construction mapping
-        const transformedData = data.map(row => {
-            return {
-                ...row,
-                OCCTYPE: OccupancyMapping[row.OCCTYPE] || row.OCCTYPE,
-                OCCSCHEME: 'ATC'
-            };
-        });
-
-        // Update state and localStorage
-        setUploadedData(transformedData);
-        localStorage.setItem('uploadedData', JSON.stringify(transformedData));
-        
-        return transformedData;
-    } catch (error) {
-        console.error('Error applying construction mapping:', error);
-        throw error;
-    }
-};
-
-const RunGeocoder = async (data: any[]) => {
-  try {
-    const response = await axios.post('http://localhost:8000/geocoder/', data, {
-      headers: { 'Content-Type': 'application/json' },
-      timeout: 60000,
-    });
-    
-    const geocodedData = response.data.data;
-
-    if (!Array.isArray(geocodedData)) {
-      throw new Error('Invalid response format');
-    }
-    
-    // Update state and localStorage
-    setUploadedData(geocodedData);
-    localStorage.setItem('uploadedData', JSON.stringify(geocodedData));
-    
-    return geocodedData;
-    
-  } catch (error) {
-    console.error('Error during geocoding:', error);
-    throw error;
-  }
-};
-
-const RunCleaner = async (data: any[]) => {
-  try {
-
-    
-    const response = await axios.post('http://localhost:8000/cleaner/', data, {
-      headers: { 'Content-Type': 'application/json' },
-      timeout: 60000,
-    });
-    
-    const geocodedData = response.data;
-
-
-    
-    // Update state and localStorage
-    setUploadedData(geocodedData);
-    localStorage.setItem('uploadedData', JSON.stringify(geocodedData));
-    
-
-    return geocodedData;
-    
-  } catch (error) {
-    console.error('Error during geocoding:', error);
-
-    throw error;
-  }
-};
-
-const exportCSV = (data: any[]) => {
-  const csvContent = [
-    Object.keys(data[0]).join(','), // header row
-    ...data.map(row => Object.values(row).join(',')) // data rows
-  ].join('\n');
-
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.setAttribute('href', url);
-  link.setAttribute('download', 'exported_data.csv');
-  link.style.visibility = 'hidden';
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-};
 
   return (
     <div className="p-6">
@@ -432,10 +220,10 @@ const exportCSV = (data: any[]) => {
         </div>
       ) : activeTab === 'mapper' ? (
         <div className="mb-6">
-          <Button onClick={handleFindMapping} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors mr-4">
+          <Button onClick={() => api.handleFindMapping(uploadedData,setMapping)} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors mr-4">
             Find Mapping
           </Button>
-          <Button onClick={() => handleApplyMapping(uploadedData, mapping)} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
+          <Button onClick={() => api.handleApplyMapping(uploadedData, mapping,setUploadedData,setMapping)} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
             Apply Mappings
           </Button>
           {Object.keys(mapping).length > 0 && (
@@ -444,10 +232,10 @@ const exportCSV = (data: any[]) => {
         </div>
       ) : activeTab === 'construction' ? (
         <div className="mb-6">
-          <Button onClick={FindConstMapping} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors mr-4">
+          <Button onClick={() => api.FindConstMapping(uploadedData,setConstMapping)} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors mr-4">
             Find Mapping
           </Button>
-          <Button onClick={() => ApplyConstMapping(uploadedData, constMapping)} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
+          <Button onClick={() => api.ApplyConstMapping(uploadedData, constMapping,setUploadedData)} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
             Apply Mappings
           </Button>
           {Object.keys(constMapping).length > 0 && (
@@ -456,10 +244,10 @@ const exportCSV = (data: any[]) => {
         </div>
       ) : activeTab === 'occupancy' ?(
         <div className="mb-6">
-          <Button onClick={FindOccMapping} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors mr-4">
+          <Button onClick={() => api.FindOccMapping(uploadedData,setOccMapping)} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors mr-4">
             Find Mapping
           </Button>
-          <Button onClick={() => ApplyOccMapping(uploadedData, occMapping)} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
+          <Button onClick={() => api.ApplyOccMapping(uploadedData, occMapping,setUploadedData)} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
             Apply Mappings
           </Button>
           {Object.keys(mapping).length > 0 && (
@@ -468,16 +256,16 @@ const exportCSV = (data: any[]) => {
         </div>
       ): activeTab === 'cleaner' ? (
         <div className="mb-6">
-          <Button onClick={() => RunGeocoder(uploadedData)} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors mr-4">
+          <Button onClick={() => api.RunGeocoder(uploadedData,setUploadedData)} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors mr-4">
             Run Geocoder
           </Button>
-          <Button onClick={() => RunCleaner(uploadedData)} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
+          <Button onClick={() => api.RunCleaner(uploadedData,setUploadedData)} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
             Run Data Cleaner
           </Button>
         </div>
       ) : activeTab === 'export' ? (
         <div className="mb-6">
-          <Button onClick={() => exportCSV(uploadedData)} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
+          <Button onClick={() => api.exportCSV(uploadedData)} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
             Export Data
           </Button>
         </div>
