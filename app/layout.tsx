@@ -35,15 +35,15 @@ export default function RootLayout({
           </header>
 
           {/* Main container - Adjusted to account for fixed header */}
-          <div className="pt-16 flex min-h-screen">
+          <div className="pt-16 flex min-h-screen overflow-x-hidden">
             <SidebarProvider>
               {/* Sidebar - Full height minus header */}
-              <div className="h-[calc(100vh-4rem)] sticky top-16">
+              <div className="h-[calc(100vh-4rem)] sticky top-16 flex-shrink-0">
                 <Sidebar />
               </div>
               
               {/* Main Content */}
-              <main className="flex-1 relative">
+              <main className="flex-1 relative overflow-x-auto">
                 <div className="sticky top-20 left-4 z-40 md:hidden">
                   <SidebarTrigger />
                 </div>

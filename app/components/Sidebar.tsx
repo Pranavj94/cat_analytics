@@ -55,7 +55,7 @@ export default function AppSidebar() {
                         flex items-center gap-3 px-4 py-3 
                         transition-colors rounded-md
                         ${pathname === item.url 
-                          ? 'bg-blue-50 text-blue-600' 
+                          ? 'bg-custom-yellow text-blue-600' 
                           : 'text-gray-600 hover:bg-gray-50 hover:text-blue-600'
                         }
                       `}

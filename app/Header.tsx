@@ -1,7 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import mainIcon from './mainicon.jpg';
-import ardonagh from './ardonagh4.jpg';
+import ardonagh from './images/ardonagh4.jpg';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 export default function Header() {
