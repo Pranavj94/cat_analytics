@@ -237,7 +237,7 @@ export default function Data() {
             Apply Mappings
           </Button>
           {Object.keys(mapping).length > 0 && (
-            <EditableMappingTable mapping={mapping} setMapping={setMapping} />
+            <EditableMappingTable mapping={constMapping} setMapping={setConstMapping} />
           )}
         </div>
       ) : activeTab === 'occupancy' ? (
@@ -249,7 +249,7 @@ export default function Data() {
             Apply Mappings
           </Button>
           {Object.keys(mapping).length > 0 && (
-            <EditableMappingTable mapping={mapping} setMapping={setMapping} />
+            <EditableMappingTable mapping={occMapping} setMapping={setOccMapping} />
           )}
         </div>
       ) : activeTab === 'cleaner' ? (
