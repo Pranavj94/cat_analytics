@@ -120,6 +120,7 @@ async def Run_Cleaner(data: List[Dict[Any, Any]]):
 
 
 class ReportRequest_PowerBI(BaseModel):
+    reportName:str
     edmValue: str
     allPortfolios: bool
     portfolios: str = None
@@ -127,6 +128,7 @@ class ReportRequest_PowerBI(BaseModel):
     analysis: str = None
 
 class ReportRequest_Excel(BaseModel):
+    reportName:str
     edmValue: str
     allPortfolios: bool
     portfolios: str = None

@@ -24,6 +24,7 @@ import {
 type ReportType = 'Excel' | 'PowerBI';
 
 const formSchema = z.object({
+  reportName: z.string().min(1, { message: "Report Name is required." }),
   reportType: z.enum(['Excel', 'PowerBI']),
   edm: z.string().min(1, { message: "EDM is required." }),
   allPortfolios: z.boolean(),
@@ -38,6 +39,7 @@ export default function ReportingPage() {
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      reportName: '',
       reportType: 'Excel',
       edm: '',
       allPortfolios: true,
@@ -76,6 +78,7 @@ export default function ReportingPage() {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
+          reportName: formData.reportName,
           edmValue: formData.edm,
           allPortfolios: formData.allPortfolios,
           portfolios: formData.portfolios,
@@ -121,7 +124,7 @@ export default function ReportingPage() {
       <div className="w-full max-w-4xl">
         <h1 className="text-2xl font-bold mb-5">Generate Report</h1>
         {alert && (
-          <Alert variant={alert.type === 'error' ? 'destructive' : 'success'}>
+          <Alert variant={alert.type === 'error' ? 'destructive' : 'default'}>
             <AlertCircle className="h-4 w-4" />
             <AlertTitle>{alert.type === 'error' ? 'Error' : 'Success'}</AlertTitle>
             <AlertDescription>{alert.message}</AlertDescription>
@@ -129,6 +132,19 @@ export default function ReportingPage() {
         )}
         <Form {...form}>
           <form onSubmit={generateReport} className="space-y-8 border p-4 rounded-lg shadow-lg">
+            <FormField
+              control={form.control}
+              name="reportName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Report Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter Report Name" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="reportType"
