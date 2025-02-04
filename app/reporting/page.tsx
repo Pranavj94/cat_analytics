@@ -1,8 +1,8 @@
 'use client';
 
-import React from 'react';
+import React, { useState, FormEvent } from 'react';
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { AlertCircle, CheckCircle2 } from 'lucide-react';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
@@ -47,16 +47,88 @@ export default function ReportingPage() {
     },
   });
 
-  function onSubmit(values: FormData) {
-    console.log(values);
-  }
+  const [alert, setAlert] = useState<{ type: 'error' | 'success'; message: string } | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const generateReport = async (e: FormEvent) => {
+    e.preventDefault();
+    const formData = form.getValues();
+
+    if (!formData.edm.trim()) {
+      setAlert({
+        type: 'error',
+        message: 'EDM is required'
+      });
+      return;
+    }
+
+    setIsLoading(true);
+    setAlert(null);
+
+    const endpoint = formData.reportType === 'Excel' 
+      ? '/generateExcelReport/' 
+      : '/generatePowerBIReport/';
+
+    try {
+      const response = await fetch(`http://localhost:8000${endpoint}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          edmValue: formData.edm,
+          allPortfolios: formData.allPortfolios,
+          portfolios: formData.portfolios,
+          allAnalysis: formData.allAnalysis,
+          analysis: formData.analysis,
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      setAlert({
+        type: 'success',
+        message: `${formData.reportType} report generated successfully`
+      });
+    } catch (error) {
+      let errorMessage = 'An unexpected error occurred';
+
+      if (error instanceof Error) {
+        if (error.message.includes('Failed to fetch')) {
+          errorMessage = 'Unable to connect to the server. Please check your connection.';
+        } else if (error.message.includes('HTTP error! status: 422')) {
+          errorMessage = 'Invalid data provided. Please check your inputs.';
+        } else if (error.message.includes('HTTP error! status: 500')) {
+          errorMessage = 'Server error. Please try again later.';
+        }
+      }
+
+      setAlert({
+        type: 'error',
+        message: errorMessage
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="flex justify-center items-center min-h-screen p-4">
       <div className="w-full max-w-4xl">
         <h1 className="text-2xl font-bold mb-5">Generate Report</h1>
+        {alert && (
+          <Alert variant={alert.type === 'error' ? 'destructive' : 'success'}>
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>{alert.type === 'error' ? 'Error' : 'Success'}</AlertTitle>
+            <AlertDescription>{alert.message}</AlertDescription>
+          </Alert>
+        )}
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 border p-4 rounded-lg shadow-lg">
+          <form onSubmit={generateReport} className="space-y-8 border p-4 rounded-lg shadow-lg">
             <FormField
               control={form.control}
               name="reportType"
@@ -170,7 +242,9 @@ export default function ReportingPage() {
                 )}
               />
             )}
-            <Button type="submit">Submit</Button>
+            <Button type="submit" disabled={isLoading}>
+              {isLoading ? 'Generating...' : 'Generate Report'}
+            </Button>
           </form>
         </Form>
       </div>
