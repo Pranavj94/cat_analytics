@@ -1,232 +1,179 @@
 'use client';
 
-import React, { useState, FormEvent } from 'react';
+import React from 'react';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm, Controller } from "react-hook-form";
+import { z } from "zod";
 import { AlertCircle, CheckCircle2 } from 'lucide-react';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from "@/components/ui/label";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 
 type ReportType = 'Excel' | 'PowerBI';
 
-interface FormData {
-  reportType: ReportType;
-  edm: string;
-  allPortfolios: boolean;
-  portfolios: string;
-  allAnalysis: boolean;
-  analysis: string;
-}
+const formSchema = z.object({
+  reportType: z.enum(['Excel', 'PowerBI']),
+  edm: z.string().min(1, { message: "EDM is required." }),
+  allPortfolios: z.boolean(),
+  portfolios: z.string().optional(),
+  allAnalysis: z.boolean(),
+  analysis: z.string().optional(),
+});
 
-interface AlertState {
-  type: 'success' | 'error';
-  message: string;
-}
+type FormData = z.infer<typeof formSchema>;
 
-const ReportGeneration = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [alert, setAlert] = useState<AlertState | null>(null);
-  const [formData, setFormData] = useState<FormData>({
-    reportType: 'PowerBI',
-    edm: '',
-    allPortfolios: true,
-    portfolios: '',
-    allAnalysis: true,
-    analysis: ''
+export default function ReportingPage() {
+  const form = useForm<FormData>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      reportType: 'Excel',
+      edm: '',
+      allPortfolios: true,
+      portfolios: '',
+      allAnalysis: true,
+      analysis: '',
+    },
   });
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value
-    }));
-  };
-
-  const generateReport = async (e: FormEvent) => {
-    e.preventDefault();
-    if (!formData.edm.trim()) {
-      setAlert({
-        type: 'error',
-        message: 'EDM is required'
-      });
-      return;
-    }
-
-    setIsLoading(true);
-    setAlert(null);
-    
-    const endpoint = formData.reportType === 'Excel' 
-      ? '/generateExcelReport/' 
-      : '/generatePowerBIReport/';
-
-    try {
-      const response = await fetch(`http://localhost:8000${endpoint}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          edmValue: formData.edm,
-          allPortfolios: formData.allPortfolios,
-          portfolios: formData.portfolios,
-          allAnalysis: formData.allAnalysis,
-          analysis: formData.analysis,
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      
-      setAlert({
-        type: 'success',
-        message: `${formData.reportType} report generated successfully`
-      });
-    } catch (error) {
-      let errorMessage = 'An unexpected error occurred';
-      
-      if (error instanceof Error) {
-        if (error.message.includes('Failed to fetch')) {
-          errorMessage = 'Unable to connect to the server. Please check your connection.';
-        } else if (error.message.includes('HTTP error! status: 422')) {
-          errorMessage = 'Invalid data provided. Please check your inputs.';
-        } else if (error.message.includes('HTTP error! status: 500')) {
-          errorMessage = 'Server error. Please try again later.';
-        }
-      }
-
-      setAlert({
-        type: 'error',
-        message: errorMessage
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  function onSubmit(values: FormData) {
+    console.log(values);
+  }
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      <main className="flex-1 p-8 max-w-3xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-900">Report Generation</h1>
-        
-        {alert && (
-          <Alert className={`mt-4 ${alert.type === 'error' ? 'bg-red-50' : 'bg-green-50'}`}>
-            {alert.type === 'error' ? (
-              <AlertCircle className="h-4 w-4 text-red-600" />
-            ) : (
-              <CheckCircle2 className="h-4 w-4 text-green-600" />
-            )}
-            <AlertTitle className={alert.type === 'error' ? 'text-red-800' : 'text-green-800'}>
-              {alert.type === 'error' ? 'Error' : 'Success'}
-            </AlertTitle>
-            <AlertDescription className={alert.type === 'error' ? 'text-red-700' : 'text-green-700'}>
-              {alert.message}
-            </AlertDescription>
-          </Alert>
-        )}
-
-        <form onSubmit={generateReport} className="mt-6 space-y-6">
-          <div className="bg-white p-6 rounded-lg shadow-sm">
-            <h3 className="text-lg font-semibold text-gray-900">Report Type</h3>
-            <RadioGroup
-              value={formData.reportType}
-              onValueChange={(value) => setFormData(prev => ({ ...prev, reportType: value as ReportType }))}
-              className="flex gap-4 mt-2"
-            >
-              <RadioGroupItem value="Excel" id="excel" className="cursor-pointer p-3 border rounded-lg transition-colors">
-                <label htmlFor="excel" className={`cursor-pointer ${formData.reportType === 'Excel' ? 'bg-blue-500 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'}`}>
-                  Excel
-                </label>
-              </RadioGroupItem>
-              <RadioGroupItem value="PowerBI" id="powerbi" className="cursor-pointer p-3 border rounded-lg transition-colors">
-                <label htmlFor="powerbi" className={`cursor-pointer ${formData.reportType === 'PowerBI' ? 'bg-blue-500 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'}`}>
-                  PowerBI
-                </label>
-              </RadioGroupItem>
-            </RadioGroup>
-          </div>
-
-          <div className="bg-white p-6 rounded-lg shadow-sm space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">EDM</label>
-              <Input
-                type="text"
-                name="edm"
-                value={formData.edm}
-                onChange={handleInputChange}
-                className="mt-1 w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Enter EDM value"
+    <div className="flex justify-center items-center min-h-screen p-4">
+      <div className="w-full max-w-4xl">
+        <h1 className="text-2xl font-bold mb-5">Generate Report</h1>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 border p-4 rounded-lg shadow-lg">
+            <FormField
+              control={form.control}
+              name="reportType"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Report Type</FormLabel>
+                  <FormControl>
+                    <RadioGroup value={field.value} onValueChange={field.onChange}>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="Excel" id="excel" />
+                        <Label htmlFor="excel">Excel</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="PowerBI" id="powerbi" />
+                        <Label htmlFor="powerbi">PowerBI</Label>
+                      </div>
+                    </RadioGroup>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="edm"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>EDM</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter EDM" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="allPortfolios"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        onBlur={field.onBlur}
+                        name={field.name}
+                        ref={field.ref}
+                        id="allPortfolios"
+                      />
+                      <Label htmlFor="allPortfolios" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                        All Portfolios
+                      </Label>
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            {!form.watch('allPortfolios') && (
+              <FormField
+                control={form.control}
+                name="portfolios"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Portfolios</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter Portfolios" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
-            
-            <div className="flex items-center gap-2">
-              <Checkbox
-                name="allPortfolios"
-                checked={formData.allPortfolios}
-                onCheckedChange={(checked) => setFormData(prev => ({ ...prev, allPortfolios: checked as boolean }))}
-                className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                id="allPortfolios"
-              />
-              <label htmlFor="allPortfolios" className="text-sm font-medium text-gray-700">
-                All Portfolios
-              </label>
-            </div>
-            {!formData.allPortfolios && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Portfolios</label>
-                <Input
-                  type="text"
-                  name="portfolios"
-                  value={formData.portfolios}
-                  onChange={handleInputChange}
-                  className="mt-1 w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="Enter Portfolios"
-                />
-              </div>
             )}
-
-            <div className="flex items-center gap-2">
-              <Checkbox
-                name="allAnalysis"
-                checked={formData.allAnalysis}
-                onCheckedChange={(checked) => setFormData(prev => ({ ...prev, allAnalysis: checked as boolean }))}
-                className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                id="allAnalysis"
+            <FormField
+              control={form.control}
+              name="allAnalysis"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        onBlur={field.onBlur}
+                        name={field.name}
+                        ref={field.ref}
+                        id="allAnalysis"
+                      />
+                      <Label htmlFor="allAnalysis" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                        All Analysis
+                      </Label>
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            {!form.watch('allAnalysis') && (
+              <FormField
+                control={form.control}
+                name="analysis"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Analysis</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter Analysis" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-              <label htmlFor="allAnalysis" className="text-sm font-medium text-gray-700">
-                All Analysis
-              </label>
-            </div>
-            {!formData.allAnalysis && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Analysis</label>
-                <Input
-                  type="text"
-                  name="analysis"
-                  value={formData.analysis}
-                  onChange={handleInputChange}
-                  className="mt-1 w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="Enter Analysis"
-                />
-              </div>
             )}
-          </div>
-
-          <Button 
-            type="submit"
-            disabled={isLoading}
-            className={`w-full px-4 py-2 text-white rounded-lg shadow-sm transition-colors ${isLoading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600'}`}
-          >
-            {isLoading ? 'Generating Report...' : 'Generate Report'}
-          </Button>
-        </form>
-      </main>
+            <Button type="submit">Submit</Button>
+          </form>
+        </Form>
+      </div>
     </div>
   );
-};
-
-export default ReportGeneration;
+}
