@@ -12,13 +12,8 @@ import os
 ##BLOB##
 ###############
 container='rmsinput'
-#blob_service_client = BlobServiceClient.from_connection_string('DefaultEndpointsProtocol=https;AccountName=analyticspfcomblobstore;AccountKey=6tJ0ZtywMnifzWBICxJ5fKBsj5Y491i/xg+nzaIfbISygjyx5W+H94kPOhWZAmWX89Qi9DIw22eLdnHcw+VtPg==;EndpointSuffix=core.windows.net')
-#container_client = blob_service_client.get_container_client(container)
-#CONNECT_STR = "DefaultEndpointsProtocol=https;AccountName=analyticspfcomblobstore;AccountKey=6tJ0ZtywMnifzWBICxJ5fKBsj5Y491i/xg+nzaIfbISygjyx5W+H94kPOhWZAmWX89Qi9DIw22eLdnHcw+VtPg==;EndpointSuffix=core.windows.net"
-CONTAINER_NAME = "rmsinput"
-#container_clientD = ContainerClient.from_connection_string(conn_str=CONNECT_STR, container_name=CONTAINER_NAME)
+#
 
-#list all files in the container
 def checkJobIDinBlob(job_id):
     blob_list = container_client.list_blobs()
     alist=[]
@@ -67,7 +62,7 @@ def deleteAllFiles(job_id,reins=False):
         container_clientD.delete_blob(blob=reinsName)
 
 #################################
-uri = "mongodb://pfcosmo:BvFxC4HriIHBMTa88KTvsxo8aLjUZto6gfM1i2JdlDywvAdRLczHmwwNJdjsWuPF7ac7sUu9cfVwV1C5wV6LHQ==@pfcosmo.mongo.cosmos.azure.com:10255/?ssl=true&replicaSet=globaldb&maxIdleTimeMS=120000&appName=@pfcosmo@&retrywrites=false"
+
 client = pymongo.MongoClient(uri)
 #load a database
 db = client.DB_1
@@ -293,23 +288,7 @@ def getDlmProgress(jobIdList,authFile):
     return crrProgressDict,successDict
 
 
-def postCATautoSubApi():
 
-    url = "https://prod-13.uksouth.logic.azure.com:443/workflows/3bd23601f11b4921a2818929d581c555/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=-IxaPHSV1tENbvc6oFLUlR8egG2vU8f48zOdnyYm3Qs"
-
-    payload={}
-    headers = {}
-
-    response = requests.request("GET", url, headers=headers)
-
-def cleanString(aString):
-    q = ""
-    for i in aString:
-        if i.isalpha():
-            q = "".join([q,i])
-    return q
-def cleanNumber(aString):
-    q = ""
     for i in aString:
         if i.isnumeric():
             q = "".join([q,i])
