@@ -6,9 +6,12 @@ import io
 import uvicorn
 import logging
 from . import main_utils
+from . import reporting_utils
 from pydantic import BaseModel, Field
 from typing import List, Dict, Any
 import traceback
+
+
 
 # Configure logging
 logging.basicConfig(
@@ -162,14 +165,12 @@ async def generate_excel_report(request: ReportRequest_Excel):
     try:
         logger.info(f"Generating Excel report with EDM: {request.edmValue}")
         
-        # Add your Excel report generation logic here
-        # Simulate some processing time
-        # await asyncio.sleep(2)
-        
+        report_path = reporting_utils.generate_excel_report(request.edmValue)
         logger.info("Excel report generated successfully")
         return {
             "status": "success",
-            "message": "Excel report generated successfully"
+            "message": "Excel report generated successfully",
+            "file_path": report_path
         }
     except Exception as e:
         logger.error(f"Error generating Excel report: {str(e)}")

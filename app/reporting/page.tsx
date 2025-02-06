@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, FormEvent } from 'react';
+import React, { useState, useEffect, FormEvent } from 'react';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from "@/components/ui/label";
+import * as XLSX from 'xlsx';
 import {
   Form,
   FormControl,
@@ -51,6 +52,11 @@ export default function ReportingPage() {
 
   const [alert, setAlert] = useState<{ type: 'error' | 'success'; message: string } | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const generateReport = async (e: FormEvent) => {
     e.preventDefault();
@@ -64,40 +70,50 @@ export default function ReportingPage() {
       return;
     }
 
-    setIsLoading(true);
-    setAlert(null);
+  setIsLoading(true);
+  setAlert(null);
 
-    const endpoint = formData.reportType === 'Excel' 
-      ? '/generateExcelReport/' 
-      : '/generatePowerBIReport/';
+  const endpoint = formData.reportType === 'Excel' 
+    ? '/generateExcelReport/' 
+    : '/generatePowerBIReport/';
 
-    try {
-      const response = await fetch(`http://localhost:8000${endpoint}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          reportName: formData.reportName,
-          edmValue: formData.edm,
-          allPortfolios: formData.allPortfolios,
-          portfolios: formData.portfolios,
-          allAnalysis: formData.allAnalysis,
-          analysis: formData.analysis,
-        })
-      });
+  try {
+    const response = await fetch(`http://localhost:8000${endpoint}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        reportName: formData.reportName,
+        edmValue: formData.edm,
+        allPortfolios: formData.allPortfolios,
+        portfolios: formData.portfolios,
+        allAnalysis: formData.allAnalysis,
+        analysis: formData.analysis,
+      })
+    });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
 
-      const data = await response.json();
+    const result = await response.json();
+    if (result.status === 'success') {
+      const fileResponse = await fetch(`/backend/rms_utils/${result.file_path}`);
+      const blob = await fileResponse.blob();
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `${formData.reportName}.xlsx`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
 
       setAlert({
         type: 'success',
         message: `${formData.reportType} report generated successfully`
       });
-    } catch (error) {
+    }
+  } catch (error) {
       let errorMessage = 'An unexpected error occurred';
 
       if (error instanceof Error) {
@@ -118,6 +134,10 @@ export default function ReportingPage() {
       setIsLoading(false);
     }
   };
+
+  if (!isClient) {
+    return null;
+  }
 
   return (
     <div className="flex justify-center items-center min-h-screen p-4">
@@ -193,7 +213,6 @@ export default function ReportingPage() {
                         onBlur={field.onBlur}
                         name={field.name}
                         ref={field.ref}
-                        id="allPortfolios"
                       />
                       <Label htmlFor="allPortfolios" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                         All Portfolios
@@ -259,11 +278,12 @@ export default function ReportingPage() {
               />
             )}
             <Button type="submit" disabled={isLoading}>
-              {isLoading ? 'Generating...' : 'Generate Report'}
+              Generate Report
             </Button>
           </form>
         </Form>
       </div>
     </div>
   );
+
 }
