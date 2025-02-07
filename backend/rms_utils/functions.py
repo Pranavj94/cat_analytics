@@ -12,8 +12,11 @@ import os
 ##BLOB##
 ###############
 container='rmsinput'
-#
 
+CONTAINER_NAME = "rmsinput"
+#container_clientD = ContainerClient.from_connection_string(conn_str=CONNECT_STR, container_name=CONTAINER_NAME)
+
+#list all files in the container
 def checkJobIDinBlob(job_id):
     blob_list = container_client.list_blobs()
     alist=[]
@@ -62,7 +65,7 @@ def deleteAllFiles(job_id,reins=False):
         container_clientD.delete_blob(blob=reinsName)
 
 #################################
-
+uri = "mongodb://localhost:27017"
 client = pymongo.MongoClient(uri)
 #load a database
 db = client.DB_1
@@ -288,7 +291,23 @@ def getDlmProgress(jobIdList,authFile):
     return crrProgressDict,successDict
 
 
+def postCATautoSubApi():
 
+    url = "s"
+
+    payload={}
+    headers = {}
+
+    response = requests.request("GET", url, headers=headers)
+
+def cleanString(aString):
+    q = ""
+    for i in aString:
+        if i.isalpha():
+            q = "".join([q,i])
+    return q
+def cleanNumber(aString):
+    q = ""
     for i in aString:
         if i.isnumeric():
             q = "".join([q,i])

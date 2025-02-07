@@ -10,7 +10,7 @@ rms_utils_path = os.path.abspath(os.path.join(os.getcwd(), 'backend', 'rms_utils
 if rms_utils_path not in sys.path:
     sys.path.append(rms_utils_path)
 
-import os
+
 cur_dir = os.getcwd()
 # Print the current working directory
 print("Current working directory:", os.getcwd())
@@ -49,11 +49,16 @@ import shutil
 import gc
 
 
+from dotenv import load_dotenv
+load_dotenv()
+
+PASSWORD = os.getenv('RMS_PASSWORD')
+EMAIL = os.getenv('RMS_EMAIL')
 
 def generate_excel_report(datasource):
 
-
-    auth_file=rms.authenticationRMS('pranav.jayakumar@ardonaghspecialty.com',PASSWORD)
+    PASSWORD='Trivandrum@1994'
+    auth_file=rms.authenticationRMS(EMAIL,PASSWORD)
     print(datasource)
     df_analyses=aal.getAnalyses(str(datasource),auth_file[0])
     df_portfolios=aal.getPortfolios(datasource,auth_file[0])
@@ -62,6 +67,7 @@ def generate_excel_report(datasource):
     df_stochastic_cep,df_analyses = aal.stochastic_cep(df_analyses)
 
     report_path=car.createReport(datasource,df_analyses,df_stochastic_cep,df_portfolios,df_policies,df_locations,'ANA',auth_file) 
+    
 
     return report_path
 

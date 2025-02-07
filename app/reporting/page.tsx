@@ -11,7 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from "@/components/ui/label";
-import * as XLSX from 'xlsx';
+
 import {
   Form,
   FormControl,
@@ -99,19 +99,34 @@ export default function ReportingPage() {
 
     const result = await response.json();
     if (result.status === 'success') {
-      const fileResponse = await fetch(`/backend/rms_utils/${result.file_path}`);
-      const blob = await fileResponse.blob();
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = `${formData.reportName}.xlsx`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-
-      setAlert({
-        type: 'success',
-        message: `${formData.reportType} report generated successfully`
-      });
+      try {
+        // Create a fetch request to the download endpoint
+        const fileResponse = await fetch(`http://localhost:8000/api/download-report?file_path=${encodeURIComponent(result.file_path)}`, {
+          method: 'GET'
+        });
+        
+        if (!fileResponse.ok) {
+          throw new Error('Failed to download file');
+        }
+        
+        // Get the file as a blob
+        const blob = await fileResponse.blob();
+        
+        // Create a link and trigger download
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `${formData.reportName}.xlsx`;
+        document.body.appendChild(link);
+        link.click();
+        
+        // Clean up
+        document.body.removeChild(link);
+        URL.revokeObjectURL(link.href);
+      } catch (error) {
+        console.error('Download error:', error);
+      }
+    } else {
+      console.error('Failed to generate report');
     }
   } catch (error) {
       let errorMessage = 'An unexpected error occurred';
@@ -287,3 +302,4 @@ export default function ReportingPage() {
   );
 
 }
+

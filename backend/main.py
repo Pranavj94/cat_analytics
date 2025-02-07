@@ -1,6 +1,8 @@
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse,FileResponse
+
+import os
 import pandas as pd
 import io
 import uvicorn
@@ -166,6 +168,9 @@ async def generate_excel_report(request: ReportRequest_Excel):
         logger.info(f"Generating Excel report with EDM: {request.edmValue}")
         
         report_path = reporting_utils.generate_excel_report(request.edmValue)
+        
+
+
         logger.info("Excel report generated successfully")
         return {
             "status": "success",
@@ -179,6 +184,29 @@ async def generate_excel_report(request: ReportRequest_Excel):
             status_code=500,
             detail="Failed to generate Excel report: " + str(e)
         )
+
+#D:\Ardonagh\SOV_cleanser\SOV_v2\cat_analytics\backend\rms_utils\reporting_outputs\BG_Commercial_express_0125_Modelling_Results_070225.xlsx
+@app.get("/api/download-report")
+async def download_report(file_path: str):
+
+    BASE_REPORT_DIR = "D:/Ardonagh/SOV_cleanser/SOV_v2/cat_analytics/backend/rms_utils/"
+    
+    try:
+        full_path = os.path.abspath(os.path.join(BASE_REPORT_DIR, file_path))
+        print('Requested file path:', full_path)
+        
+        # if not full_path.startswith(BASE_REPORT_DIR):
+        #     raise HTTPException(status_code=403, detail="Invalid file path")
+        
+        if not os.path.exists(full_path):
+            print('File not found:', full_path)
+            raise HTTPException(status_code=404, detail="File not found")
+        
+        return FileResponse(full_path, filename=os.path.basename(full_path))
+    except Exception as e:
+        print('Error:', str(e))
+        raise HTTPException(status_code=500, detail=str(e))
+    
 
 @app.get("/health")
 async def health_check():
