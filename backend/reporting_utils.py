@@ -57,7 +57,6 @@ EMAIL = os.getenv('RMS_EMAIL')
 
 def generate_excel_report(datasource):
 
-    PASSWORD='Trivandrum@1994'
     auth_file=rms.authenticationRMS(EMAIL,PASSWORD)
     print(datasource)
     df_analyses=aal.getAnalyses(str(datasource),auth_file[0])

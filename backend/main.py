@@ -195,8 +195,6 @@ async def download_report(file_path: str):
         full_path = os.path.abspath(os.path.join(BASE_REPORT_DIR, file_path))
         print('Requested file path:', full_path)
         
-        # if not full_path.startswith(BASE_REPORT_DIR):
-        #     raise HTTPException(status_code=403, detail="Invalid file path")
         
         if not os.path.exists(full_path):
             print('File not found:', full_path)
