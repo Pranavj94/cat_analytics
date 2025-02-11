@@ -1,0 +1,11 @@
+fastapi
+langchain_community
+pandas
+langchain_openai
+chromadb
+boto3
+ipywidgets
+pymongo
+tinydb
+openpyxl
+python-multipart
