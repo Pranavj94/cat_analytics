@@ -1,14 +1,14 @@
 import { useCallback, useState } from "react";
 import axios from "axios";
 
-
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export const handleFindMapping = async (uploadedData,setMapping) => {
     try {
         // Ensure uploadedData is an array
         const dataToSend = Array.isArray(uploadedData) ? uploadedData : [uploadedData];
         
-        const response = await axios.post('http://localhost:8000/columnmapper/', dataToSend, {
+        const response = await axios.post(`${API_BASE_URL}/columnmapper/`, dataToSend, {
             headers: { 'Content-Type': 'application/json' },
         });
         
@@ -55,7 +55,7 @@ export const FindConstMapping = async (uploadedData,setConstMapping) => {
       // Ensure uploadedData is an array
       const dataToSend = Array.isArray(uploadedData) ? uploadedData : [uploadedData];
       
-      const response = await axios.post('http://localhost:8000/constructionmapper/', dataToSend, {
+      const response = await axios.post(`${API_BASE_URL}/constructionmapper/`, dataToSend, {
           headers: { 'Content-Type': 'application/json' },
           timeout: 60000, // 60 seconds timeout
       });
@@ -102,7 +102,7 @@ export const FindOccMapping = async (uploadedData,setOccMapping) => {
       // Ensure uploadedData is an array
       const dataToSend = Array.isArray(uploadedData) ? uploadedData : [uploadedData];
       
-      const response = await axios.post('http://localhost:8000/occupancymapper/', dataToSend, {
+      const response = await axios.post(`${API_BASE_URL}/occupancymapper/`, dataToSend, {
           headers: { 'Content-Type': 'application/json' },
           timeout: 60000, // 60 seconds timeout
       });
@@ -146,7 +146,7 @@ export const ApplyOccMapping = async (
 
 export const RunGeocoder = async (data,setUploadedData) => {
   try {
-    const response = await axios.post('http://localhost:8000/geocoder/', data, {
+    const response = await axios.post(`${API_BASE_URL}/geocoder/`, data, {
       headers: { 'Content-Type': 'application/json' },
       timeout: 60000,
     });
@@ -173,7 +173,7 @@ export const RunCleaner = async (data,setUploadedData) => {
   try {
 
     
-    const response = await axios.post('http://localhost:8000/cleaner/', data, {
+    const response = await axios.post(`${API_BASE_URL}/cleaner/`, data, {
       headers: { 'Content-Type': 'application/json' },
       timeout: 60000,
     });

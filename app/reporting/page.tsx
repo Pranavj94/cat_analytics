@@ -26,6 +26,9 @@ import {
 
 type ReportType = 'Excel' | 'PowerBI';
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+
 const formSchema = z.object({
   reportName: z.string().min(1, { message: "Report Name is required." }),
   reportType: z.enum(['Excel', 'PowerBI']),
@@ -87,7 +90,7 @@ export default function ReportingPage() {
     : '/generatePowerBIReport/';
 
   try {
-    const response = await fetch(`http://localhost:8000${endpoint}`, {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -110,7 +113,7 @@ export default function ReportingPage() {
     if (result.status === 'success') {
       try {
         // Create a fetch request to the download endpoint
-        const fileResponse = await fetch(`http://localhost:8000/api/download-report?file_path=${encodeURIComponent(result.file_path)}`, {
+        const fileResponse = await fetch(`${API_BASE_URL}/api/download-report?file_path=${encodeURIComponent(result.file_path)}`, {
           method: 'GET'
         });
         
